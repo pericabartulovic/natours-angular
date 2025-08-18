@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { OverviewComponent } from '../pages/home/overview/overview.component';
+import { OverviewComponent } from '../pages/home/overview.component';
 
 export const routes: Routes = [
   {
