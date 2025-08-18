@@ -1,1 +1,11 @@
-<p>overview works!</p>
+<div class="card-container">
+  @if ($tours | async; as tours) {
+  <p>Ima ih</p>
+  <!-- <Card v-for="tour in tours" :key="tour.id" :tour="tour" /> -->
+  }
+  @else {
+  <div class="no-tours-message">
+    No tours found.
+  </div>
+  }
+</div>

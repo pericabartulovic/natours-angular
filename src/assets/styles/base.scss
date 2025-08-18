@@ -34,9 +34,6 @@ body {
   font-family: 'Lato', sans-serif;
   color: #777;
   // padding: .5rem;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
 
   // @include respond(md) {
   // padding: 2rem;
@@ -45,4 +42,11 @@ body {
   // @include respond(lg) {
   // padding: 3rem;
   // }
+}
+
+app-root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  // /* Optional: ensure full viewport height */
 }

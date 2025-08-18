@@ -40,3 +40,6 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+# Environment files (optional, if you want to keep them out of Git)
+/src/environments/environment*.ts
