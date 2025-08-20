@@ -1,11 +1,10 @@
-<div class="card-container">
-  @if ($tours | async; as tours) {
-  <p>Ima ih</p>
-  <!-- <Card v-for="tour in tours" :key="tour.id" :tour="tour" /> -->
-  }
-  @else {
-  <div class="no-tours-message">
-    No tours found.
-  </div>
-  }
+@if ($tours | async; as tours) {
+@for (tour of tours; track tour._id) {
+<app-card [tour]="tour"></app-card>
+}
+}
+@else {
+<div class="no-tours-message">
+  No tours found.
 </div>
+}

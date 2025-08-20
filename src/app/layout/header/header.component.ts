@@ -13,7 +13,6 @@ export class HeaderComponent {
   constructor(public authService: AuthService) {
     this.authService.checkAuth();
   }
-
   handleLogout() {
     this.authService.logout();
   }

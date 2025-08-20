@@ -18,19 +18,22 @@ export class AuthService {
   ) {}
 
   checkAuth() {
-    this.http.get<{ user: User }>(`${this.apiUrl}/users/me`).subscribe({
-      next: (res) => {
-        this.isLoggedInSubject.next(true);
-        this.userSubject.next(res.user);
-      },
-      error: () => {
-        this.isLoggedInSubject.next(false);
-        this.userSubject.next(null);
-      },
-    });
+    this.http
+      .get<{ user: User }>(`${this.apiUrl}/users/me`, { withCredentials: true })
+      .subscribe({
+        next: (res) => {
+          this.isLoggedInSubject.next(true);
+          this.userSubject.next(res.user);
+        },
+        error: () => {
+          this.isLoggedInSubject.next(false);
+          this.userSubject.next(null);
+        },
+      });
   }
 
   logout() {
+    this.http.get(`${this.apiUrl}/users/logout`);
     this.isLoggedInSubject.next(false);
     this.userSubject.next(null);
   }

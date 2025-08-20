@@ -1,9 +1,9 @@
 <header class="header">
   <div class="header__logo">
-    <img src="assets/img/logo-white.png" alt="Natours logo" />
+    <img src="/assets/img/logo-white.png" alt="Natours logo" />
   </div>
   <nav class="nav">
-    <a [routerLink]="[ '/' ]" class="nav__el">All tours</a>
+    <a [routerLink]="[ '/tours' ]" class="nav__el">All tours</a>
     @if (authService.isLoggedIn$ | async) {
     @if (authService.user$ | async; as user) {
     <a [routerLink]="['/users/me']" class="nav__el">
