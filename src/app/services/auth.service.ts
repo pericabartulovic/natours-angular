@@ -3,6 +3,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { User } from '../models/user.model'; // Adjust path
 import { API_URL } from '../api-url.token';
+import { AuthResponse } from '../models/auth-response.model';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -32,9 +33,37 @@ export class AuthService {
       });
   }
 
+  logIn(email: string, password: string) {
+    let postData = { email: email, password: password };
+    this.http
+      .post<AuthResponse>(`${this.apiUrl}/users/login`, postData, {
+        withCredentials: true,
+      })
+      .subscribe({
+        next: (res) => {
+          this.isLoggedInSubject.next(true);
+          this.userSubject.next(res.user);
+        },
+        error: () => {
+          this.isLoggedInSubject.next(false);
+          this.userSubject.next(null);
+        },
+      });
+  }
+
   logout() {
-    this.http.get(`${this.apiUrl}/users/logout`);
-    this.isLoggedInSubject.next(false);
-    this.userSubject.next(null);
+    this.http
+      .get(`${this.apiUrl}/users/logout`, { withCredentials: true })
+      .subscribe({
+        next: () => {
+          this.isLoggedInSubject.next(false);
+          this.userSubject.next(null);
+        },
+        error: (err) => {
+          console.error('Logout failed:', err);
+          this.isLoggedInSubject.next(false);
+          this.userSubject.next(null);
+        },
+      });
   }
 }

@@ -21,7 +21,6 @@ export class MapBoxComponent implements AfterViewInit {
     'pk.eyJ1IjoicGVyaWNhYjM1IiwiYSI6ImNtZDB3bDh5NTB0YmYyanFuZjM1cjR6MG4ifQ.Yu9Lb17GEXTFTB_5k5A9nA';
 
   async ngAfterViewInit(): Promise<void> {
-    console.log(this.locations);
     // Dynamically import mapbox-gl for SSR safety and to ensure mapboxgl is available
     const mapboxgl = (await import('mapbox-gl')).default;
     mapboxgl.accessToken = this.MAPBOX_TOKEN;
