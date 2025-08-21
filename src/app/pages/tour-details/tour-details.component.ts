@@ -8,6 +8,7 @@ import { OverviewBoxComponent } from '../../components/overview-box/overview-box
 import { SplitStringPipe } from '../../pipes/split.pipe';
 import { ReviewCardComponent } from '../../components/review-card/review-card.component';
 import { ResolveFn } from '@angular/router';
+import { MapBoxComponent } from '../../components/map-box/map-box.component';
 
 @Component({
   selector: 'app-tour-details',
@@ -17,6 +18,7 @@ import { ResolveFn } from '@angular/router';
     SplitStringPipe,
     OverviewBoxComponent,
     ReviewCardComponent,
+    MapBoxComponent,
   ],
   templateUrl: './tour-details.component.html',
   styleUrl: './tour-details.component.scss',

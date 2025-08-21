@@ -82,9 +82,13 @@
     </section>
 
     <!-- Section Map -->
-    <!-- <section class="section-map">
-      <MapBoxMap v-if="tour && tour.locations" :locations="tour.locations" />
-    </section> -->
+    <section class="section-map">
+      @if(tour) {
+      @if(tour.locations) {
+      <app-map-box [locations]="tour.locations" />
+      }
+      }
+    </section>
 
     <!-- Section Reviews -->
     <section class="section-reviews">
