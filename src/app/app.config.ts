@@ -1,5 +1,9 @@
 import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import {
+  provideRouter,
+  withComponentInputBinding,
+  withRouterConfig,
+} from '@angular/router';
 
 import { routes } from './routes/app.routes';
 import { provideHttpClient } from '@angular/common/http';
@@ -9,7 +13,13 @@ import { API_URL } from './api-url.token';
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
-    provideRouter(routes),
+    provideRouter(
+      routes,
+      withComponentInputBinding(),
+      withRouterConfig({
+        paramsInheritanceStrategy: 'always',
+      }),
+    ),
     provideHttpClient(),
     { provide: API_URL, useValue: environment.apiUrl },
   ],

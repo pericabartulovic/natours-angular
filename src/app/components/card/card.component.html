@@ -26,7 +26,7 @@
         <use xlink:href="/assets/img/icons.svg#icon-calendar"></use>
       </svg>
       <span>
-        {{ tour.startDates[0] }}
+        {{ tour.startDates[0] | date:"MMMM yyyy" }}
       </span>
     </div>
     <div class="card__data">
@@ -54,6 +54,6 @@
         rating ({{ tour.ratingsQuantity }})
       </span>
     </p>
-    <a [routerLink]="[ `tour/${tour.slug}` ]" class="btn btn--green btn--small">Details</a>
+    <a [routerLink]="[ '/tour', tour.slug]" class="btn btn--green btn--small">Details</a>
   </div>
 </div>

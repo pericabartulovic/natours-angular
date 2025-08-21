@@ -13,7 +13,6 @@ export const routes: Routes = [
       import('../pages/tour-details/tour-details.component').then(
         (m) => m.TourDetailsComponent,
       ),
-    //TODO: resolve tourName === 'Natours | name of the tour',
   },
   {
     path: 'users',
