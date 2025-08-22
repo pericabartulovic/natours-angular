@@ -87,7 +87,7 @@ export class MapBoxComponent implements AfterViewInit {
           'line-cap': 'round',
         },
         paint: {
-          'line-color': '#55c57a',
+          'line-color': '#8001c6',
           'line-width': 4,
         },
       });

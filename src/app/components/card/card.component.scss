@@ -34,8 +34,8 @@
     width: 100%;
     height: 100%;
     opacity: 0.7;
-    background-image: linear-gradient(to right bottom, #7dd56f, #28b487);
-    background-image: -webkit-gradient(linear, left top, right bottom, from(#7dd56f), to(#28b487));
+    background-image: linear-gradient(to right bottom, #aa59fb, #e84774);
+    background-image: -webkit-gradient(linear, left top, right bottom, from(#aa59fb), to(#e84774));
   }
 
   &__picture-img {
@@ -85,7 +85,7 @@
   &__icon {
     height: 2rem;
     width: 2rem;
-    fill: #55c57a;
+    fill: #8001c6;
   }
 
   &__footer {

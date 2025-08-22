@@ -68,9 +68,9 @@
   background-image: -webkit-gradient(linear,
       left top,
       right top,
-      from(#7dd56f),
-      to(#28b487));
-  background-image: linear-gradient(to right, #7dd56f, #28b487);
+      from(#aa59fb),
+      to(#e84774));
+  background-image: linear-gradient(to right, #aa59fb, #e84774);
   -webkit-background-clip: text;
   color: transparent;
   letter-spacing: 0.1rem;
@@ -104,11 +104,11 @@
   background-image: -webkit-gradient(linear,
       left top,
       right bottom,
-      from(rgba(125, 213, 111, 0.85)),
-      to(rgba(40, 180, 135, 0.85)));
+      from(#aa59fbd9),
+      to(#e84774d9));
   background-image: linear-gradient(to bottom right,
-      rgba(125, 213, 111, 0.85),
-      rgba(40, 180, 135, 0.85));
+      #aa59fbd9,
+      #e84774d9);
 }
 
 .heading-primary {

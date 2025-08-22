@@ -1,6 +1,5 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 import {
-  AbstractControl,
   FormControl,
   FormGroup,
   ReactiveFormsModule,
@@ -8,7 +7,7 @@ import {
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../../services/auth.service';
-import { take, tap } from 'rxjs';
+import { NotificationService } from '../../../../services/notification.service';
 
 @Component({
   selector: 'app-login',
@@ -32,6 +31,7 @@ export class LoginComponent {
   constructor(
     private authService: AuthService,
     private router: Router,
+    private notificationService: NotificationService,
   ) {}
 
   get emailIsInvalid() {
@@ -62,14 +62,13 @@ export class LoginComponent {
       this.loading = false;
 
       if (loggedIn) {
+        this.notificationService.notify({
+          message: 'Login successful!',
+          type: 'success',
+          duration: 5000,
+        });
         setTimeout(() => this.router.navigate(['/tours']), 1000);
-      } else {
-        this.error = 'Login failed, please try again.';
       }
     });
-    // } catch (err) {
-    //   alertStore.showAlert('error',err.response?.data?.message || 'Login failed. Please try again.')
-    // } finally {
-    //   loading.value = false
   }
 }

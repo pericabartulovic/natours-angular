@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { User } from '../models/user.model'; // Adjust path
 import { API_URL } from '../api-url.token';
 import { AuthResponse } from '../models/auth-response.model';
+import { NotificationService } from './notification.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -16,6 +17,7 @@ export class AuthService {
   constructor(
     private http: HttpClient,
     @Inject(API_URL) private apiUrl: string,
+    private notificationService: NotificationService,
   ) {}
 
   checkAuth() {
@@ -44,9 +46,18 @@ export class AuthService {
           this.isLoggedInSubject.next(true);
           this.userSubject.next(res.user);
         },
-        error: () => {
+        error: (err) => {
           this.isLoggedInSubject.next(false);
           this.userSubject.next(null);
+
+          const backendMessage =
+            err?.error?.message || 'Login failed, please try again.';
+          // send to NotificationService
+          this.notificationService.notify({
+            message: backendMessage,
+            type: 'error',
+            duration: 5000,
+          });
         },
       });
   }

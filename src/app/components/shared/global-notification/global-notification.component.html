@@ -1,0 +1,6 @@
+@if(visible) {
+<div class="notification" [class]="[type ? 'notification--' + type : '',
+    visible ? 'notification--visible' : '']">
+  {{ message }}
+</div>
+}

@@ -37,7 +37,7 @@
 
   &:focus {
     outline: none;
-    background-color: #2e864b;
+    background-color: #5d028f;
   }
 
   &--white {
@@ -50,11 +50,11 @@
   }
 
   &--green {
-    background-color: #55c57a;
+    background-color: #8001c6;
     color: #fff;
 
     &::after {
-      background-color: #55c57a;
+      background-color: #8001c6;
     }
   }
 
@@ -68,7 +68,7 @@
 .btn-small,
 .btn-small:link,
 .btn-small:visited {
-  background-color: #55c57a;
+  background-color: #8001c6;
   color: #fff;
   font-size: 1.4rem;
   padding: 1.25rem 3rem;
@@ -86,17 +86,17 @@
 
 .btn-small {
   &:hover {
-    background-color: #7dd56f;
+    background-color: #aa59fb;
   }
 }
 
 // Text button
 .btn-text:link,
 .btn-text:visited {
-  color: #55c57a;
+  color: #8001c6;
   display: inline-block;
   text-decoration: none;
-  border-bottom: 1px solid #55c57a;
+  border-bottom: 1px solid #8001c6;
   padding: 3px;
   transition: all 0.2s;
   -webkit-transition: all 0.2s;
@@ -104,7 +104,7 @@
 
 .btn-text {
   &:hover {
-    background-color: #55c57a;
+    background-color: #8001c6;
     color: #fff;
     box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.15);
     transform: translateY(-2px);
@@ -121,7 +121,7 @@
 
   &:focus {
     outline: none;
-    outline: 3px solid #55c57a;
+    outline: 3px solid #8001c6;
     outline-offset: 3px;
   }
 }
@@ -164,7 +164,7 @@
   &__icon {
     height: 2.25rem;
     width: 2.25rem;
-    fill: #55c57a;
+    fill: #8001c6;
   }
 
   &__label {
@@ -216,7 +216,7 @@
 
   &:focus {
     outline: none;
-    border-bottom: 3px solid #55c57a;
+    border-bottom: 3px solid #8001c6;
   }
 
   &:focus:invalid {
@@ -267,22 +267,22 @@
   z-index: -1;
 
   &:focus+label {
-    outline: 3px solid #55c57a;
+    outline: 3px solid #8001c6;
     outline-offset: 3px;
   }
 
   &+label {
-    color: #55c57a;
+    color: #8001c6;
     display: inline-block;
     text-decoration: none;
-    border-bottom: 1px solid #55c57a;
+    border-bottom: 1px solid #8001c6;
     padding: 3px;
     transition: all 0.2s;
     -webkit-transition: all 0.2s;
     cursor: pointer;
 
     &:hover {
-      background-color: #55c57a;
+      background-color: #8001c6;
       color: #fff;
       box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.15);
       -webkit-box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.15);

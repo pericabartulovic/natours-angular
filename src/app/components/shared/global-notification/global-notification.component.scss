@@ -1,0 +1,33 @@
+.notification {
+  position: fixed;
+  top: 3rem;
+  left: 50%;
+  transform: translateX(-50%) translateY(-20px);
+  opacity: 0;
+  padding: 1.5rem 3rem;
+  border-radius: 0.5rem;
+  color: white;
+  font-size: 1.6rem;
+  z-index: 9999;
+  box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.1);
+
+  // smooth enter/leave
+  transition: opacity 0.4s ease, transform 0.4s ease;
+
+  &--visible {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  &--success {
+    background-color: #ab5bfb;
+  }
+
+  &--error {
+    background-color: #e84774;
+  }
+
+  &--warning {
+    background-color: #e8a347;
+  }
+}
