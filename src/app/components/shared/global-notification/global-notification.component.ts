@@ -4,6 +4,7 @@ import {
   Input,
   input,
   OnChanges,
+  OnDestroy,
   Signal,
   signal,
   SimpleChanges,
@@ -39,7 +40,7 @@ import {
     ]),
   ],
 })
-export class GlobalNotificationComponent {
+export class GlobalNotificationComponent implements OnChanges, OnDestroy {
   visible = true;
   @Input() type!: 'success' | 'error' | 'warning' | undefined;
   @Input() message: string | undefined = '';
@@ -47,12 +48,21 @@ export class GlobalNotificationComponent {
 
   private timeoutId?: ReturnType<typeof setTimeout>;
 
-  ngOnInit() {
-    setTimeout(() => (this.visible = true), 10); // tiny delay to trigger transition
+  ngOnChanges(changes: SimpleChanges) {
+    //not ngOnInit cause i need to detect changes and remove previous notif timeout (eg: error then quick success didn't show next notif)
+    if (changes['message'] && this.message) {
+      // reset previous timer
+      clearTimeout(this.timeoutId);
 
-    this.timeoutId = setTimeout(() => {
+      // start from hidden, then trigger transition
       this.visible = false;
-    }, this.duration);
+      setTimeout(() => (this.visible = true), 10);
+
+      // auto-hide after duration
+      this.timeoutId = setTimeout(() => {
+        this.visible = false;
+      }, this.duration);
+    }
   }
 
   ngOnDestroy() {
