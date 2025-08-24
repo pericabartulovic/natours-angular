@@ -1,6 +1,8 @@
-@if(visible) {
-<div class="notification" [class]="[type ? 'notification--' + type : '',
-    visible ? 'notification--visible' : '']">
-  {{ message }}
+@if(notificationService.notification$ | async; as notif) {
+<div class="notification" [class]="
+    (notif.type ? 'notification--' + notif.type : '') +
+    (notif.message ? ' notification--visible' : '')
+  ">
+  {{ notif.message }}
 </div>
 }

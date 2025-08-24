@@ -65,7 +65,6 @@ export class LoginComponent {
         this.notificationService.notify({
           message: 'Login successful!',
           type: 'success',
-          duration: 5000,
         });
         setTimeout(() => this.router.navigate(['/tours']), 1000);
       }

@@ -52,11 +52,9 @@ export class AuthService {
 
           const backendMessage =
             err?.error?.message || 'Login failed, please try again.';
-          // send to NotificationService
           this.notificationService.notify({
             message: backendMessage,
             type: 'error',
-            duration: 5000,
           });
         },
       });
