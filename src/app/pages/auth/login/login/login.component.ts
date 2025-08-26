@@ -62,10 +62,6 @@ export class LoginComponent {
       this.loading = false;
 
       if (loggedIn) {
-        this.notificationService.notify({
-          message: 'Login successful!',
-          type: 'success',
-        });
         setTimeout(() => this.router.navigate(['/tours']), 1000);
       }
     });
