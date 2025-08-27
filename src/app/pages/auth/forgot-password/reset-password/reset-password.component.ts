@@ -44,15 +44,15 @@ export class ResetPasswordComponent {
     ),
   });
 
-  get passwordsGroup() {
-    return this.form.get('passwords') as FormGroup;
-  }
-
   constructor(
     private authService: AuthService,
     private router: Router,
     private activatedRoute: ActivatedRoute,
   ) {}
+
+  get passwordsGroup() {
+    return this.form.get('passwords') as FormGroup;
+  }
 
   get passwordIsInvalid() {
     return (

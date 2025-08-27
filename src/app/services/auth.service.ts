@@ -37,8 +37,42 @@ export class AuthService {
       });
   }
 
+  signUp(
+    name: string,
+    email: string,
+    password: string,
+    passwordConfirm: string,
+  ) {
+    let postData = { name, email, password, passwordConfirm };
+    this.http
+      .post<AuthResponse>(`${this.apiUrl}/users/signup`, postData)
+      .subscribe({
+        next: (res) => {
+          this.isLoggedInSubject.next(true);
+          this.userSubject.next(res.user);
+          this.notificationService.notify({
+            message: "🎉 Account created! You're all set to start exploring 🚀",
+            type: 'success',
+          });
+        },
+        error: (err) => {
+          this.isLoggedInSubject.next(false);
+          this.userSubject.next(null);
+
+          const backendMessage =
+            err?.error?.message ||
+            'Something went wrong during signup, please try again.';
+          this.notificationService.notify({
+            message: backendMessage,
+            type: 'error',
+            duration: 5000,
+          });
+        },
+      });
+  }
+
   logIn(email: string, password: string) {
-    let postData = { email: email, password: password };
+    let postData = { email, password };
     this.http
       .post<AuthResponse>(`${this.apiUrl}/users/login`, postData, {
         withCredentials: true,
@@ -123,7 +157,7 @@ export class AuthService {
 
           const backendMessage =
             err?.error?.message ||
-            'Reseting password faild, please try again later.';
+            'Resetting password failed, please try again later.';
           this.notificationService.notify({
             message: backendMessage,
             type: 'error',
