@@ -1,10 +1,17 @@
 @if ($tours | async; as tours) {
+@if (tours.length > 0) {
 @for (tour of tours; track tour._id) {
 <app-card [tour]="tour"></app-card>
 }
 }
 @else {
-<div class="no-tours-message">
-  No tours found.
+<div class="no-tours-message heading-secondary">
+  No tours found. Please try later again.
+</div>
+}
+}
+@else {
+<div class="loading-message heading-secondary">
+  Loading tours...
 </div>
 }

@@ -4,6 +4,7 @@ import { Observable } from 'rxjs/internal/Observable';
 import { Tour } from '../models/tour.model';
 import { catchError, map, tap, throwError } from 'rxjs';
 import { API_URL } from '../api-url.token';
+import { environment } from '../../environments/environment';
 
 interface TourResponse {
   status: string;
@@ -37,8 +38,12 @@ export class ApiService {
     return this.http.get<TourResponse>(`${this.apiUrl}/tours/${tourId}`).pipe(
       map((response) => response.tour),
       catchError((error) => {
-        console.error('API error:', error);
-        return throwError(() => error);
+        if (environment.production) {
+          return throwError(() => 'No tour find with that name');
+        } else {
+          console.error('API error:', error);
+          return throwError(() => error);
+        }
       }),
     );
   }

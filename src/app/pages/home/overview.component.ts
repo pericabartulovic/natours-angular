@@ -21,7 +21,7 @@ export class OverviewComponent {
   constructor(private apiService: ApiService) {
     this.$tours = this.apiService.getTours().pipe(
       catchError((err) => {
-        this.errorMsg = 'Failed to load tours!';
+        this.errorMsg = 'Failed to load tours! Please try later again.';
         return of([]);
       }),
     );

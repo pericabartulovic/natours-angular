@@ -48,7 +48,7 @@ export class TourDetailsComponent implements OnInit {
         }
       }),
       catchError((err) => {
-        this.errorMsg = err.error?.message || 'Failed to load tour details.';
+        this.errorMsg = err.error.message || 'Failed to load tour details.';
         this.loading = false;
         return of(undefined);
       }),

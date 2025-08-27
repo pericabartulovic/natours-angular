@@ -11,21 +11,20 @@
       <input id="password" class="form__input" type="password" placeholder="••••••••" formControlName="password" />
     </div>
     <div class="form__group form__group--actions">
-      <button class="btn btn--green" type="submit" [disabled]="loading">
+      <button class="btn btn--green" type="submit" [disabled]="emailIsInvalid || passwordIsInvalid">
         {{ loading ? 'Logging in...' : 'Login' }}
       </button>
       <a [routerLink]="['/users/forgotPassword']" class="btn btn--white">Forgot password</a>
     </div>
-    <!-- <div v-if="error" class="form__error">{{ error }}</div> -->
 
     @if (emailIsInvalid) {
-    <p class="control-error">
+    <p class="form__error">
       Please enter valid email addres.
     </p>
     }
 
     @if (passwordIsInvalid) {
-    <p class="control-error">
+    <p class="form__error">
       Please enter valid password (at least 6 characters long).
     </p>
     }

@@ -283,15 +283,13 @@
 }
 
 .loading {
+  display: block;
   padding: 2rem;
   text-align: center;
-  color: #888;
-  font-size: 1.25rem;
 }
 
 .error {
+  display: block;
   padding: 2rem;
   text-align: center;
-  color: #c00;
-  font-size: 1.25rem;
 }
