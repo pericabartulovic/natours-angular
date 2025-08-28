@@ -241,6 +241,14 @@
   & &::-webkit-input-placeholder {
     color: #bbb;
   }
+
+  &[type="password"]::placeholder {
+    color: #bbb;
+  }
+
+  &[type="password"] {
+    color: #7300b2;
+  }
 }
 
 .form__group {

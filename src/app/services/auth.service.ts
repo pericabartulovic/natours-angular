@@ -5,7 +5,6 @@ import { User } from '../models/user.model'; // Adjust path
 import { API_URL } from '../api-url.token';
 import { AuthResponse } from '../models/auth-response.model';
 import { NotificationService } from './notification.service';
-import { ActivatedRoute } from '@angular/router';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -19,7 +18,6 @@ export class AuthService {
     private http: HttpClient,
     @Inject(API_URL) private apiUrl: string,
     private notificationService: NotificationService,
-    private activatedRoute: ActivatedRoute,
   ) {}
 
   checkAuth() {

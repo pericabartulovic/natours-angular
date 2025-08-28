@@ -1,1 +1,69 @@
-<p>account works!</p>
+@if(authService.user$ | async; as user) {
+<div class="user-view">
+  <nav class="user-view__menu">
+    <app-side-nav [role]="user.role" />
+  </nav>
+
+  <div class="user-view__content">
+    <div class="user-view__form-container">
+      <h2 class="heading-secondary ma-bt-md">Your account settings</h2>
+
+      <!-- WITHOUT API -->
+      <!-- <form class="form form-user-data" action="/submit-user-data" method="POST" enctype="multipart/form-data"> -->
+
+      <!-- WITH API -->
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form form-user-data">
+        <div class="form__group">
+          <label class="form__label" for="name">Name</label>
+          <input id="name" class="form__input" type="text" formControlName="name" />
+        </div>
+        <div class="form__group ma-bt-md">
+          <label class="form__label" for="email">Email address</label>
+          <input id="email" class="form__input" type="email" formControlName="email" />
+        </div>
+        <div class="form__group form__photo-upload">
+          <img class="form__user-photo" [src]="`http://localhost:3000/img/users/${user?.photo}`" alt="User photo" />
+          <input class="form__upload" type="file" accept="image/*" id="photo" name="photo" />
+          <label for="photo">Choose new photo</label>
+        </div>
+
+        <div class="form__group right">
+          <button class="btn btn--small btn--green" type="submit"
+            [disabled]="form.invalid  || (form.value.name === userName && form.value.email === email)">
+            Save settings
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div class="line">&nbsp;</div>
+
+    <div class="user-view__form-container">
+      <h2 class="heading-secondary ma-bt-md">Password change</h2>
+      <form [formGroup]="formPasswords" (ngSubmit)="onSubmitPassword()" class="form form-user-password">
+        <div class="form__group">
+          <label class="form__label" for="passwordCurrent">Current password</label>
+          <input id="passwordCurrent" class="form__input" type="password" placeholder="••••••••"
+            formControlName="passwordCurrent" />
+        </div>
+        <div class="form__group">
+          <label class="form__label" for="password">New password</label>
+          <input id="password" class="form__input" type="password" placeholder="••••••••" formControlName="password" />
+        </div>
+        <div class="form__group ma-bt-lg">
+          <label class="form__label" for="passwordConfirm">Confirm password</label>
+          <input id="passwordConfirm" class="form__input" type="password" placeholder="••••••••"
+            formControlName="passwordConfirm" />
+        </div>
+        <div class="form__group right">
+          <button class="btn btn--small btn--green btn--save-password" type="submit">
+            Save password
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+} @else {
+<div class="loading heading-secondary">Please log in to access account settings</div>
+}

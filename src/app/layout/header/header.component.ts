@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AsyncPipe } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
 
@@ -10,10 +10,18 @@ import { AuthService } from '../../services/auth.service';
   styleUrls: ['./header.component.scss'],
 })
 export class HeaderComponent {
-  constructor(public authService: AuthService) {
+  constructor(
+    public authService: AuthService,
+    private router: Router,
+  ) {
     this.authService.checkAuth();
   }
   handleLogout() {
     this.authService.logout();
+    this.authService.isLoggedIn$.subscribe((loggedOut) => {
+      if (loggedOut) {
+        setTimeout(() => this.router.navigate(['/tours']), 1000);
+      }
+    });
   }
 }

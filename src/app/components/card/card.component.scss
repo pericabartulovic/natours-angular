@@ -17,6 +17,14 @@
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
   -ms-flex-direction: column;
+
+  .btn-small,
+  .btn {
+    grid-row: 1 / 3;
+    justify-self: end;
+    align-self: center;
+    -ms-flex-item-align: center;
+  }
 }
 
 .card {
@@ -112,13 +120,5 @@
 
   &__ratings {
     grid-row: 2 / 3;
-  }
-
-  .btn-small,
-  .btn {
-    grid-row: 1 / 3;
-    justify-self: end;
-    align-self: center;
-    -ms-flex-item-align: center;
   }
 }

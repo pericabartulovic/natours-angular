@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import {
-  AbstractControl,
   FormControl,
   FormGroup,
   ReactiveFormsModule,
@@ -8,16 +7,7 @@ import {
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../../../services/auth.service';
-
-// multi-input validators factory
-function equalValues(controlName1: string, controlName2: string) {
-  return (control: AbstractControl) => {
-    const val1 = control.get(controlName1)?.value;
-    const val2 = control.get(controlName2)?.value;
-
-    return val1 === val2 ? null : { valuesNotEqual: true };
-  };
-}
+import { equalValues } from '../../../../shared/validators/equal-values.validator';
 
 @Component({
   selector: 'app-reset-password',
