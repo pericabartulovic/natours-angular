@@ -43,24 +43,64 @@
       <form [formGroup]="formPasswords" (ngSubmit)="onSubmitPassword()" class="form form-user-password">
         <div class="form__group">
           <label class="form__label" for="passwordCurrent">Current password</label>
-          <input id="passwordCurrent" class="form__input" type="password" placeholder="••••••••"
+          <input #passwordCurrentInput id="passwordCurrent" class="form__input" type="password" placeholder="••••••••"
             formControlName="passwordCurrent" />
+          <app-btn-pass-visible [input]="passwordCurrentInput" />
         </div>
         <div class="form__group">
           <label class="form__label" for="password">New password</label>
-          <input id="password" class="form__input" type="password" placeholder="••••••••" formControlName="password" />
+          <input #passwordInput id="password" class="form__input" type="password" placeholder="••••••••"
+            formControlName="password" />
+          <app-btn-pass-visible [input]="passwordInput" />
         </div>
         <div class="form__group ma-bt-lg">
           <label class="form__label" for="passwordConfirm">Confirm password</label>
-          <input id="passwordConfirm" class="form__input" type="password" placeholder="••••••••"
+          <input #passwordConfirmInput id="passwordConfirm" class="form__input" type="password" placeholder="••••••••"
             formControlName="passwordConfirm" />
+          <app-btn-pass-visible [input]="passwordConfirmInput" />
         </div>
         <div class="form__group right">
-          <button class="btn btn--small btn--green btn--save-password" type="submit">
+          <button class="btn btn--small btn--green btn--save-password" type="submit"
+            [disabled]="formPasswords.invalid || formPasswords.hasError('valuesNotEqual')">
             Save password
           </button>
         </div>
+
+        @if (passwordCurrentIsInvalid) {
+        <p class="form__error">
+          Please enter valid password (at least 8 characters long).
+        </p>
+        }
+
+        @if (passwordIsInvalid) {
+        <p class="form__error">
+          Please enter valid password (at least 8 characters long).
+        </p>
+        }
+
+        @if (passwordConfirmIsInvalid) {
+        <p class="form__error">
+          Please enter valid password to confirm (at least 8 characters long).
+        </p>
+        }
+
+        @if (formPasswords.hasError('valuesNotEqual')) {
+        <p class="form__error">
+          Passwords do not match!
+        </p>
+        }
       </form>
+    </div>
+
+    <div class="line">&nbsp;</div>
+
+    <div class="user-view__form-container">
+      <h2 class="heading-secondary ma-bt-md">Delete Account</h2>
+      <div class="form__group right">
+        <button class="btn btn--small btn--white btn--save-password" type="button">
+          Delete Account
+        </button>
+      </div>
     </div>
   </div>
 </div>

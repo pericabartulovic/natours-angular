@@ -7,13 +7,19 @@ import {
   Validators,
 } from '@angular/forms';
 import { AuthService } from '../../../services/auth.service';
+import { UserService } from '../../../services/user.service';
 import { equalValues } from '../../../shared/validators/equal-values.validator';
 import { SideNavComponent } from '../../../layout/side-nav/side-nav.component';
-import { UserService } from '../../../services/user.service';
+import { BtnPassVisibleComponent } from '../../../components/shared/btn-pass-visible/btn-pass-visible.component';
 
 @Component({
   selector: 'app-account',
-  imports: [ReactiveFormsModule, SideNavComponent, AsyncPipe],
+  imports: [
+    ReactiveFormsModule,
+    SideNavComponent,
+    AsyncPipe,
+    BtnPassVisibleComponent,
+  ],
   templateUrl: './account.component.html',
   styleUrl: './account.component.scss',
 })
@@ -21,6 +27,12 @@ export class AccountComponent implements OnInit {
   userName = '';
   email = '';
 
+  constructor(
+    public authService: AuthService,
+    private userService: UserService,
+  ) {}
+
+  // User data update
   form = new FormGroup({
     name: new FormControl('', {
       validators: [Validators.required],
@@ -31,28 +43,6 @@ export class AccountComponent implements OnInit {
       updateOn: 'change',
     }),
   });
-
-  formPasswords = new FormGroup(
-    {
-      passwordCurrent: new FormControl('', {
-        validators: [Validators.required, Validators.minLength(6)],
-      }),
-      password: new FormControl('', {
-        validators: [Validators.required, Validators.minLength(6)],
-      }),
-      passwordConfirm: new FormControl('', {
-        validators: [Validators.required, Validators.minLength(6)],
-      }),
-    },
-    {
-      validators: [equalValues('password', 'passwordConfirm')],
-    },
-  );
-
-  constructor(
-    public authService: AuthService,
-    private userService: UserService,
-  ) {}
 
   ngOnInit() {
     this.authService.user$.subscribe((user) => {
@@ -81,5 +71,50 @@ export class AccountComponent implements OnInit {
     this.userService.updateMe(trimmedName, trimmedEmail);
   }
 
-  onSubmitPassword() {}
+  // Password update
+  formPasswords = new FormGroup(
+    {
+      passwordCurrent: new FormControl('', {
+        validators: [Validators.required, Validators.minLength(8)],
+      }),
+      password: new FormControl('', {
+        validators: [Validators.required, Validators.minLength(8)],
+      }),
+      passwordConfirm: new FormControl('', {
+        validators: [Validators.required, Validators.minLength(8)],
+      }),
+    },
+    {
+      validators: [equalValues('password', 'passwordConfirm')],
+    },
+  );
+
+  get passwordCurrentIsInvalid() {
+    return (
+      this.formPasswords.controls.passwordCurrent.touched &&
+      this.formPasswords.controls.passwordCurrent.invalid
+    );
+  }
+
+  get passwordIsInvalid() {
+    return (
+      this.formPasswords.controls.password.touched &&
+      this.formPasswords.controls.password.invalid
+    );
+  }
+
+  get passwordConfirmIsInvalid() {
+    return (
+      this.formPasswords.controls.passwordConfirm.touched &&
+      this.formPasswords.controls.passwordConfirm.invalid
+    );
+  }
+
+  onSubmitPassword() {
+    this.authService.updatePassword(
+      this.formPasswords.controls.passwordCurrent.value!,
+      this.formPasswords.controls.password.value!,
+      this.formPasswords.controls.passwordConfirm.value!,
+    );
+  }
 }

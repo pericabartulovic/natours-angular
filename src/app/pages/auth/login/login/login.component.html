@@ -8,7 +8,9 @@
     </div>
     <div class="form__group ma-bt-md">
       <label class="form__label" for="password">Password</label>
-      <input id="password" class="form__input" type="password" placeholder="••••••••" formControlName="password" />
+      <input #passwordInput id="password" class="form__input" type="password" placeholder="••••••••"
+        formControlName="password" />
+      <app-btn-pass-visible [input]="passwordInput" />
     </div>
     <div class="form__group form__group--actions">
       <button class="btn btn--green" type="submit" [disabled]="emailIsInvalid || passwordIsInvalid">
@@ -25,7 +27,7 @@
 
     @if (passwordIsInvalid) {
     <p class="form__error">
-      Please enter valid password (at least 6 characters long).
+      Please enter valid password (at least 8 characters long).
     </p>
     }
   </form>

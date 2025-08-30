@@ -163,4 +163,33 @@ export class AuthService {
         },
       });
   }
+
+  updatePassword(
+    passwordCurrent: string,
+    password: string,
+    passwordConfirm: string,
+  ) {
+    let postData = { passwordCurrent, password, passwordConfirm };
+    this.http
+      .patch(`${this.apiUrl}/users/updateMyPassword`, postData, {
+        withCredentials: true,
+      })
+      .subscribe({
+        next: () => {
+          this.notificationService.notify({
+            message: 'Password successfully updated',
+            type: 'success',
+          });
+        },
+        error: (err) => {
+          const backendMessage =
+            err?.error?.message ||
+            'Updating password failed, please try again later.';
+          this.notificationService.notify({
+            message: backendMessage,
+            type: 'error',
+          });
+        },
+      });
+  }
 }

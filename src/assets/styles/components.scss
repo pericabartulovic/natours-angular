@@ -196,6 +196,20 @@
   }
 }
 
+.btn-password {
+  position: absolute;
+  cursor: pointer;
+  border: none;
+  bottom: 1rem;
+  right: 1rem;
+
+  &__icon {
+    fill: #bbb;
+    height: 1.8rem;
+    width: 2rem;
+  }
+}
+
 ///// FORM (login, signup) /////
 .form-container {
   margin: 0 auto;
@@ -252,6 +266,8 @@
 }
 
 .form__group {
+  position: relative;
+
   &:not(:last-child) {
     margin-bottom: 2.5rem;
   }

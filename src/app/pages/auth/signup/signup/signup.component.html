@@ -14,12 +14,15 @@
     <div class="form__group" formGroupName="passwords">
       <div class="form__group ma-bt-md">
         <label class="form__label" for="password">Password</label>
-        <input id="password" class="form__input" type="password" placeholder="••••••••" formControlName="password" />
+        <input #passwordInput id="password" class="form__input" type="password" placeholder="••••••••"
+          formControlName="password" />
+        <app-btn-pass-visible [input]="passwordInput" />
       </div>
       <div class="form__group ma-bt-md">
         <label class="form__label" for="passwordConfirm">Confirm Password</label>
-        <input id="passwordConfirm" class="form__input" type="password" placeholder="••••••••"
+        <input #passwordConfirmInput id="passwordConfirm" class="form__input" type="password" placeholder="••••••••"
           formControlName="passwordConfirm" />
+        <app-btn-pass-visible [input]="passwordConfirmInput" />
       </div>
     </div>
 
@@ -36,13 +39,13 @@
 
     @if (passwordIsInvalid) {
     <p class="form__error">
-      Please enter valid password (at least 6 characters long).
+      Please enter valid password (at least 8 characters long).
     </p>
     }
 
     @if (passwordConfirmIsInvalid) {
     <p class="form__error">
-      Please enter valid password to confirm (at least 6 characters long).
+      Please enter valid password to confirm (at least 8 characters long).
     </p>
     }
 

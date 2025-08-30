@@ -8,10 +8,11 @@ import {
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../../services/auth.service';
 import { NotificationService } from '../../../../services/notification.service';
+import { BtnPassVisibleComponent } from '../../../../components/shared/btn-pass-visible/btn-pass-visible.component';
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, BtnPassVisibleComponent],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })
@@ -24,7 +25,7 @@ export class LoginComponent {
       validators: [Validators.email, Validators.required],
     }),
     password: new FormControl('', {
-      validators: [Validators.required, Validators.minLength(6)],
+      validators: [Validators.required, Validators.minLength(8)],
     }),
   });
 
@@ -65,5 +66,9 @@ export class LoginComponent {
         setTimeout(() => this.router.navigate(['/tours']), 1000);
       }
     });
+  }
+
+  togglePasswordVisibility(input: HTMLInputElement) {
+    input.type = input.type === 'password' ? 'text' : 'password';
   }
 }
