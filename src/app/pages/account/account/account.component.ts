@@ -11,6 +11,10 @@ import { UserService } from '../../../services/user.service';
 import { equalValues } from '../../../shared/validators/equal-values.validator';
 import { SideNavComponent } from '../../../layout/side-nav/side-nav.component';
 import { BtnPassVisibleComponent } from '../../../components/shared/btn-pass-visible/btn-pass-visible.component';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from '../../../components/shared/confirm-dialog/confirm-dialog.component';
+import { Router } from '@angular/router';
+import { NotificationService } from '../../../services/notification.service';
 
 @Component({
   selector: 'app-account',
@@ -30,6 +34,9 @@ export class AccountComponent implements OnInit {
   constructor(
     public authService: AuthService,
     private userService: UserService,
+    private dialog: MatDialog,
+    private router: Router,
+    private notificationService: NotificationService,
   ) {}
 
   // User data update
@@ -116,5 +123,23 @@ export class AccountComponent implements OnInit {
       this.formPasswords.controls.password.value!,
       this.formPasswords.controls.passwordConfirm.value!,
     );
+  }
+
+  onDeleteAccount() {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: 'Delete Account',
+        message: 'Are you sure you want to permanently delete your account?',
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+      if (confirmed) {
+        this.userService.deleteMe().subscribe({
+          next: () => this.router.navigate(['/tours']),
+          error: (err) => console.error('Error deleting account', err),
+        });
+      }
+    });
   }
 }

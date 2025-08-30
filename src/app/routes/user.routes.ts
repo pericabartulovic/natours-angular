@@ -14,21 +14,26 @@ export const routes: Routes = [
   {
     path: 'login',
     component: LoginComponent,
+    title: 'Natours | Login',
   },
   {
     path: 'signup',
     component: SignupComponent,
+    title: 'Natours | Signup',
   },
   {
     path: 'me',
     component: AccountComponent,
+    title: 'Natours | Your account',
   },
   {
     path: 'forgotPassword',
     component: ForgotPasswordComponent,
+    title: 'Natours | Forgot Password?',
   },
   {
     path: 'resetPassword/:token',
     component: ResetPasswordComponent,
+    title: 'Natours | Reset Password',
   },
 ];

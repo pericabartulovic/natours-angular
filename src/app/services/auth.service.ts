@@ -43,7 +43,9 @@ export class AuthService {
   ) {
     let postData = { name, email, password, passwordConfirm };
     this.http
-      .post<AuthResponse>(`${this.apiUrl}/users/signup`, postData)
+      .post<AuthResponse>(`${this.apiUrl}/users/signup`, postData, {
+        withCredentials: true,
+      })
       .subscribe({
         next: (res) => {
           this.isLoggedInSubject.next(true);
@@ -99,19 +101,17 @@ export class AuthService {
   }
 
   logout() {
-    this.http
-      .get(`${this.apiUrl}/users/logout`, { withCredentials: true })
-      .subscribe({
-        next: () => {
-          this.isLoggedInSubject.next(false);
-          this.userSubject.next(null);
-        },
-        error: (err) => {
-          console.error('Logout failed:', err);
-          this.isLoggedInSubject.next(false);
-          this.userSubject.next(null);
-        },
-      });
+    this.http.get(`${this.apiUrl}/users/logout`).subscribe({
+      next: () => {
+        this.isLoggedInSubject.next(false);
+        this.userSubject.next(null);
+      },
+      error: (err) => {
+        console.error('Logout failed:', err);
+        this.isLoggedInSubject.next(false);
+        this.userSubject.next(null);
+      },
+    });
   }
 
   sendResetLink(email: string) {
