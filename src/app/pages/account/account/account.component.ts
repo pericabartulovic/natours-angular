@@ -136,7 +136,10 @@ export class AccountComponent implements OnInit {
     dialogRef.afterClosed().subscribe((confirmed: boolean) => {
       if (confirmed) {
         this.userService.deleteMe().subscribe({
-          next: () => this.router.navigate(['/tours']),
+          next: () => {
+            this.authService.logout();
+            this.router.navigate(['/tours']);
+          },
           error: (err) => console.error('Error deleting account', err),
         });
       }
