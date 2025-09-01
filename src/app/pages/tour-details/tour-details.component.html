@@ -73,7 +73,7 @@
     <!-- Section Pictures -->
     <section class="section-pictures">
       @for(img of tour.images; track img; let i = $index) {
-      <div class="picture-box" v-for="(img, i) in tour.images" :key="img">
+      <div class="picture-box">
         <!-- <img class="picture-box__img" :src="`/img/tours/${img}`" :alt="`The Park Camper Tour ${i + 1}`" -->
         <img class="picture-box__img" [src]="`http://localhost:3000/img/tours/${img}`"
           [alt]="`The Park Camper Tour ${i + 1}`" [class]="`picture-box__img--${i + 1}`" />
