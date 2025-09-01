@@ -221,6 +221,14 @@
   border-radius: 5px;
 }
 
+.form-account {
+  &__container {
+    max-width: 68rem;
+    margin: 0 auto;
+    padding: 0 8rem;
+  }
+}
+
 .form__input {
   display: block;
   font-family: inherit;

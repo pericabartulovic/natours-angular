@@ -20,7 +20,8 @@
   }
 
   & a:link,
-  & a:visited {
+  & a:visited,
+  & a[routerLink] {
     padding: 1rem 4rem;
     display: -webkit-box;
     display: -ms-flexbox;
@@ -35,6 +36,7 @@
     text-decoration: none;
     -webkit-transition: all 0.3s;
     transition: all 0.3s;
+    cursor: pointer;
   }
 
   & a:hover,

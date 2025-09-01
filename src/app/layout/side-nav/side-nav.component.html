@@ -1,7 +1,7 @@
 <ul class="side-nav">
   <!-- navItem('#', 'Settings', 'settings', true) -->
-  <li class="side-nav--active">
-    <a href="/users/me">
+  <li [routerLinkActive]="['side-nav--active']" [routerLinkActiveOptions]="{ exact: true }">
+    <a [routerLink]="['settings']" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
       <svg>
         <use xlink:href="/assets/img/icons.svg#icon-settings"></use>
       </svg>
@@ -10,8 +10,8 @@
   </li>
 
   <!-- navItem('/my-tours', 'My bookings', 'briefcase') -->
-  <li>
-    <a href="/my-tours">
+  <li [routerLinkActive]="['side-nav--active']" [routerLinkActiveOptions]="{ exact: true }">
+    <a [routerLink]="['my-bookings']" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
       <svg>
         <use xlink:href="/assets/img/icons.svg#icon-briefcase"></use>
       </svg>
@@ -20,8 +20,8 @@
   </li>
 
   <!-- navItem('#', 'My reviews', 'star') -->
-  <li>
-    <a href="/users/me#">
+  <li [routerLinkActive]="['side-nav--active']" [routerLinkActiveOptions]="{ exact: true }">
+    <a [routerLink]="['my-reviews']" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
       <svg>
         <use xlink:href="/assets/img/icons.svg#icon-star"></use>
       </svg>
@@ -30,8 +30,8 @@
   </li>
 
   <!-- navItem('#', 'Billing', 'credit-card') -->
-  <li>
-    <a href="#">
+  <li [routerLinkActive]="['side-nav--active']" [routerLinkActiveOptions]="{ exact: true }">
+    <a [routerLink]="['billing']" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
       <svg>
         <use xlink:href="/assets/img/icons.svg#icon-credit-card"></use>
       </svg>
@@ -44,32 +44,32 @@
 <div class="admin-nav">
   <h5 class="admin-nav__heading">Admin</h5>
   <ul class="side-nav">
-    <li>
-      <a href="#">
+    <li [routerLinkActive]="['side-nav--active']" [routerLinkActiveOptions]="{ exact: true }">
+      <a [routerLink]="['tours']" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
         <svg>
           <use xlink:href="/assets/img/icons.svg#icon-map"></use>
         </svg>
         Manage tours
       </a>
     </li>
-    <li>
-      <a href="#">
+    <li [routerLinkActive]="['side-nav--active']" [routerLinkActiveOptions]="{ exact: true }">
+      <a [routerLink]="['users']" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
         <svg>
           <use xlink:href="/assets/img/icons.svg#icon-users"></use>
         </svg>
         Manage users
       </a>
     </li>
-    <li>
-      <a href="#">
+    <li [routerLinkActive]="['side-nav--active']" [routerLinkActiveOptions]="{ exact: true }">
+      <a [routerLink]="['reviews']" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
         <svg>
           <use xlink:href="/assets/img/icons.svg#icon-star"></use>
         </svg>
         Manage reviews
       </a>
     </li>
-    <li>
-      <a href="#">
+    <li [routerLinkActive]="['side-nav--active']" [routerLinkActiveOptions]="{ exact: true }">
+      <a [routerLink]="['bookings']" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
         <svg>
           <use xlink:href="/assets/img/icons.svg#icon-briefcase"></use>
         </svg>

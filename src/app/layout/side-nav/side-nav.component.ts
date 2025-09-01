@@ -1,8 +1,9 @@
 import { Component, input } from '@angular/core';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-side-nav',
-  imports: [],
+  imports: [RouterModule],
   templateUrl: './side-nav.component.html',
   styleUrl: './side-nav.component.scss',
 })

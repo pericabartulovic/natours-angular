@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { accRoutes } from './account.routes';
 import { LoginComponent } from '../pages/auth/login/login/login.component';
 import { SignupComponent } from '../pages/auth/signup/signup/signup.component';
 import { AccountComponent } from '../pages/account/account/account.component';
@@ -25,6 +26,7 @@ export const routes: Routes = [
     path: 'me',
     component: AccountComponent,
     title: 'Natours | Your account',
+    children: accRoutes,
   },
   {
     path: 'forgotPassword',
