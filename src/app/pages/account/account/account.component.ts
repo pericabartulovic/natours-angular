@@ -14,7 +14,6 @@ import { BtnPassVisibleComponent } from '../../../components/shared/btn-pass-vis
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../../components/shared/confirm-dialog/confirm-dialog.component';
 import { Router } from '@angular/router';
-import { NotificationService } from '../../../services/notification.service';
 
 @Component({
   selector: 'app-account',
@@ -33,10 +32,9 @@ export class AccountComponent implements OnInit {
 
   constructor(
     public authService: AuthService,
-    private userService: UserService,
+    public userService: UserService,
     private dialog: MatDialog,
     private router: Router,
-    private notificationService: NotificationService,
   ) {}
 
   // User data update
@@ -49,6 +47,7 @@ export class AccountComponent implements OnInit {
       validators: [Validators.email, Validators.required],
       updateOn: 'change',
     }),
+    photo: new FormControl<File | null>(null),
   });
 
   ngOnInit() {
@@ -64,18 +63,32 @@ export class AccountComponent implements OnInit {
     });
   }
 
-  onSubmit() {
-    if (this.form.invalid || this.form.pristine) return;
-
-    const { name, email } = this.form.value;
-    const trimmedName = name!.trim();
-    const trimmedEmail = email!.trim();
-
-    if (trimmedName === this.userName && trimmedEmail === this.email) {
-      return;
+  onFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
+      this.form.patchValue({ photo: file });
+      this.form.get('photo')?.updateValueAndValidity();
     }
+  }
 
-    this.userService.updateMe(trimmedName, trimmedEmail);
+  onSubmit() {
+    const { name, email, photo } = this.form.value;
+
+    const formData = new FormData();
+    formData.append('name', name!.trim());
+    formData.append('email', email!.trim());
+    if (photo) formData.append('photo', photo);
+
+    // if (
+    //   name === this.userName &&
+    //   this.email === this.email &&
+    //   photo === this.photo
+    // ) {
+    //   return;
+    // }
+
+    this.userService.updateMe(formData);
   }
 
   // Password update

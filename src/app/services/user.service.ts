@@ -1,10 +1,10 @@
 import { Inject, Injectable } from '@angular/core';
-import { BehaviorSubject, map, Observable, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, Observable, switchMap, tap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { User } from '../models/user.model'; // Adjust path
 import { API_URL } from '../api-url.token';
 import { NotificationService } from './notification.service';
-import { Router } from '@angular/router';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root',
@@ -20,21 +20,23 @@ export class UserService {
     private http: HttpClient,
     @Inject(API_URL) private apiUrl: string,
     private notificationService: NotificationService,
-    private router: Router,
+    private authService: AuthService,
   ) {}
 
-  updateMe(name: string, email: string) {
-    let postData = { name, email };
+  updateMe(formData: FormData) {
     this.http
-      .patch(`${this.apiUrl}/users/updateMe`, postData, {
+      .patch<User>(`${this.apiUrl}/users/updateMe`, formData, {
         withCredentials: true,
       })
       .subscribe({
-        next: () =>
+        next: (res) => {
           this.notificationService.notify({
-            message: 'Name / email successfully updated',
+            message: 'Changes successfully updated',
             type: 'success',
-          }),
+          });
+          this.userSubject.next(res);
+          this.authService.checkAuth();
+        },
         error: (err) => {
           const backendMessage =
             err?.error?.message ||
@@ -67,30 +69,5 @@ export class UserService {
           });
         }),
       );
-
-    // this.http
-    //   .delete(`${this.apiUrl}/users/deleteMe`, { withCredentials: true })
-    //   .subscribe({
-    //     next: () => {
-    //       this.router.navigate(['/tours']);
-    //       this.notificationService.notify({
-    //         message:
-    //           "We're sad to see you leave. Your account has been permanently deleted.",
-    //         type: 'success',
-    //         duration: 5000,
-    //       });
-    //       // this.isLoggedInSubject.next(false);
-    //       // this.userSubject.next(null);
-    //     },
-    //     error: (err) => {
-    //       const backendMessage =
-    //         err?.error?.message ||
-    //         "We couldn't delete your account , please try again later.";
-    //       this.notificationService.notify({
-    //         message: backendMessage,
-    //         type: 'error',
-    //       });
-    //     },
-    //   });
   }
 }

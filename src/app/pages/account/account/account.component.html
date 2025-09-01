@@ -23,13 +23,14 @@
         </div>
         <div class="form__group form__photo-upload">
           <img class="form__user-photo" [src]="`http://localhost:3000/img/users/${user?.photo}`" alt="User photo" />
-          <input class="form__upload" type="file" accept="image/*" id="photo" name="photo" />
+          <input class="form__upload" type="file" accept="image/*" id="photo" name="photo"
+            (change)="onFileSelected($event)" />
           <label for="photo">Choose new photo</label>
         </div>
 
         <div class="form__group right">
           <button class="btn btn--small btn--green" type="submit"
-            [disabled]="form.invalid  || (form.value.name === userName && form.value.email === email)">
+            [disabled]="form.invalid || (form.value.name?.trim() === userName && form.value.email?.trim() === email && !form.value.photo)">
             Save settings
           </button>
         </div>
