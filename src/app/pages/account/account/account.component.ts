@@ -80,14 +80,6 @@ export class AccountComponent implements OnInit {
     formData.append('email', email!.trim());
     if (photo) formData.append('photo', photo);
 
-    // if (
-    //   name === this.userName &&
-    //   this.email === this.email &&
-    //   photo === this.photo
-    // ) {
-    //   return;
-    // }
-
     this.userService.updateMe(formData);
   }
 
