@@ -27,6 +27,18 @@
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
+
+  &--vertical {
+    flex-direction: column;
+  }
+
+  &--just-center {
+    justify-content: center;
+  }
+
+  &--grow {
+    flex-grow: 1;
+  }
 }
 
 .span-all-rows {
@@ -36,6 +48,10 @@
 .container {
   max-width: 120rem;
   margin: 0 auto;
+}
+
+.ma-bt-none {
+  margin-bottom: 0 !important;
 }
 
 .ma-bt-md {
@@ -48,6 +64,10 @@
 
 .ma-bt-xl {
   margin-bottom: 4.5rem !important;
+}
+
+.wd-100 {
+  width: 100%
 }
 
 .right {

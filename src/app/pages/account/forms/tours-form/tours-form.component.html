@@ -1,162 +1,163 @@
 @if(user$ | async; as user) {
-<div class="form-account__container">
+<div class="form-account__container form-account__container--wide">
   <h2 class="heading-secondary ma-bt-md">Tour settings</h2>
   <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form form-user-data">
     <div class="form__group">
       <label class="form__label" for="name">Name</label>
-      <input id="name" class="form__input" type="text" formControlName="name" />
+      <input id="name" class="form__input" type="text" formControlName="name" placeholder="min: 10 - max: 40 chars" />
     </div>
     <fieldset>
-      <div class="form__group ma-bt-md">
+      <div class="form__group form__group--basis">
         <label class="form__label" for="duration">Duration</label>
         <input id="duration" class="form__input" type="number" formControlName="duration" />
       </div>
-      <div class="form__group ma-bt-md">
+      <div class="form__group form__group--basis">
         <label class="form__label" for="group-size">Max group size</label>
         <input id="group-size" class="form__input" type="number" formControlName="groupSize" />
       </div>
-      <div class="form__group ma-bt-md">
-        <label for="difficulty">Difficulty</label>
-        <select id="difficulty" name="difficulty" formControlName="difficulty">
+      <div class="form__group form__group--basis">
+        <label class="form__label" for="difficulty">Difficulty</label>
+        <select id="difficulty" name="difficulty" formControlName="difficulty" class="wd-100">
           <option value="easy">Easy</option>
           <option value="medium">Medium</option>
           <option value="difficult">Difficult</option>
         </select>
       </div>
-    </fieldset>
-    <fieldset>
-      <div class="form__group ma-bt-md">
+      <div class="form__group form__group--basis">
         <label class="form__label" for="price">Price</label>
         <input id="price" class="form__input" type="number" formControlName="price" />
       </div>
-      <div class="form__group ma-bt-md">
+      <div class="form__group form__group--basis">
         <label class="form__label" for="discount">Price discount</label>
         <input id="discount" class="form__input" type="number" formControlName="discount" />
       </div>
       <div *ngIf="form.hasError('notGreater')">
         Price must be greater than discount.
       </div>
-
+      <div class="form__group form__group--basis form__checkbox">
+        <input type="checkbox" id="secret" class="form__input" name="secret" formControlName="secret" />
+        <label class="form__label" for="secret">Secret tour</label>
+      </div>
     </fieldset>
-    <fieldset>
-      <div class="form__group ma-bt-md">
+
+    <fieldset class="flex--vertical">
+      <div class="form__group ma-bt-md wd-100">
         <label class="form__label" for="summary">Summary</label>
         <textarea id="summary" class="form__input" rows="2" formControlName="summary"></textarea>
       </div>
-      <div class="form__group ma-bt-md">
+      <div class="form__group ma-bt-md wd-100">
         <label class="form__label" for="description">Description</label>
-        <textarea id="description" class="form__input" rows="4" formControlName="description"></textarea>
+        <textarea id="description" class="form__input" rows="3" formControlName="description"></textarea>
       </div>
     </fieldset>
-    <fieldset>
-      <div class="form__group form__photo-upload">
-        <img class="form__user-photo" [src]="coverPreview || 'assets/img/default.jpg'" alt="Cover image preview" />
-        <input class="form__upload" type="file" accept="image/*" id="imageCover"
+
+    <fieldset class="flex--just-center">
+      <div class="form__group form__photo-upload ma-bt-none">
+        <img class="form__tour-photo" [src]="coverPreview || 'http://localhost:3000/img/tours/placeholder.png'"
+          alt="Cover image preview" />
+        <input #coverInput class="form__upload" type="file" accept="image/*" id="imageCover"
           (change)="onFileSelected($event, 'cover')" />
-        <label for="imageCover">cover image</label>
+        <button *ngIf="coverPreview" type="button" (click)="removeImage('cover', coverInput)" class="btn--delete">
+          ✖️
+        </button>
+        <label for="imageCover">cover</label>
       </div>
-      <div class="form__group form__photo-upload" *ngFor="let img of [1,2,3]">
-        <img class="form__user-photo" [src]="imagePreviews[img] || 'assets/img/default.jpg'" alt="Tour image preview" />
-        <input class="form__upload" type="file" accept="image/*" [id]="'image' + img"
+      <div class="form__group form__photo-upload ma-bt-none" *ngFor="let img of [1,2,3]">
+        <img class="form__tour-photo" [src]="imagePreviews[img] || 'http://localhost:3000/img/tours/placeholder.png'"
+          alt="Tour image preview" />
+        <input #fileInput class="form__upload" type="file" accept="image/*" [id]="'image' + img"
           (change)="onFileSelected($event, img)" />
+        <button *ngIf="imagePreviews[img]" type="button" (click)="removeImage(img, coverInput)" class="btn--delete">
+          ✖️
+        </button>
         <label [for]="'image' + img">image {{ img }}</label>
       </div>
     </fieldset>
+
     <fieldset formArrayName="startDates">
       <legend>Start Dates</legend>
-      <div class="form__group ma-bt-md" *ngFor="let date of startDates.controls; let i = index" [formGroupName]="i"
-        class="date-group">
+      <div class="form__group" *ngFor="let date of startDates.controls; let i = index" [formGroupName]="i">
         <label class="form__label" for="date">{{i + 1}}. start date</label>
         <input id="date" class="form__input" type="date" formControlName="date" />
-        <button type="button" class="btn btn--small btn--red" (click)="removeDate(i)">
-          🗑 Remove
-        </button>
-        <hr />
+        <button type="button" class="btn--delete" (click)="removeDate(i)">✖️</button>
       </div>
-      <button type="button" class="btn btn--small btn--green" (click)="addDate()">➕ Add Date</button>
+      <button type="button" class="btn btn--small btn--white btn--icon" (click)="addDate()">➕</button>
     </fieldset>
+
     <fieldset formGroupName="startLocation">
       <legend>Start Location</legend>
-      <div class="form__group ma-bt-md">
-        <label class="form__label" for="start-lon">Longitude</label>
-        <input id="start-lon" class="form__input" type="number" formControlName="startLong" />
+      <div formGroupName="startCoordinates" class="coordinates">
+        <div class="form__group">
+          <label class="form__label" for="start-lon">Longitude</label>
+          <input id="start-lon" class="form__input" type="number" formControlName="startLong" />
+        </div>
+        <div class="form__group">
+          <label class="form__label" for="start-lat">Latitude</label>
+          <input id="start-lat" class="form__input" type="number" formControlName="startLat" />
+        </div>
       </div>
-      <div class="form__group ma-bt-md">
-        <label class="form__label" for="start-lat">Latitude</label>
-        <input id="start-lat" class="form__input" type="number" formControlName="startLat" />
-      </div>
-      <div class="form__group ma-bt-md">
+      <div class="form__group flex--grow">
         <label class="form__label" for="address">Address</label>
         <input id="address" class="form__input" type="text" formControlName="startAddress" />
       </div>
-      <div class="form__group ma-bt-md">
+      <div class="form__group wd-100">
         <label class="form__label" for="description">Description</label>
         <input id="description" class="form__input" type="text" formControlName="startDescription" />
       </div>
     </fieldset>
+
     <fieldset formArrayName="locations">
       <legend>Locations</legend>
-
       <div *ngFor="let loc of locations.controls; let i = index" [formGroupName]="i" class="location-group">
-        <div class="form__group ma-bt-md">
-          <label class="form__label">Longitude</label>
-          <input class="form__input" type="number" formControlName="long" />
+        <span>Location {{i + 1}}</span>
+        <div class="form__group" formGroupName="coordinates" class="coordinates">
+          <div class="form__group">
+            <label class="form__label">Longitude</label>
+            <input class="form__input" type="number" formControlName="long" />
+          </div>
+          <div class="form__group">
+            <label class="form__label">Latitude</label>
+            <input class="form__input" type="number" formControlName="lat" />
+          </div>
         </div>
-
-        <div class="form__group ma-bt-md">
-          <label class="form__label">Latitude</label>
-          <input class="form__input" type="number" formControlName="lat" />
-        </div>
-
-        <div class="form__group ma-bt-md">
+        <div class="form__group flex--grow">
           <label class="form__label">Address</label>
           <input class="form__input" type="text" formControlName="address" />
         </div>
-
-        <div class="form__group ma-bt-md">
+        <div class="form__group wd-100">
           <label class="form__label">Description</label>
           <input class="form__input" type="text" formControlName="description" />
         </div>
-
-        <button type="button" class="btn btn--small btn--red" (click)="removeLocation(i)">
-          🗑 Remove
-        </button>
-
-        <hr />
+        <button type="button" class="btn--delete" (click)="removeLocation(i)">✖️</button>
       </div>
-
-      <button type="button" class="btn btn--small btn--green" (click)="addLocation()">➕ Add Location</button>
+      <hr>
+      <button type="button" class="btn btn--small btn--white btn--icon" (click)="addLocation()">➕</button>
     </fieldset>
+
     <fieldset>
       <legend>Guides</legend>
-      <div class="form__group ma-bt-md">
-        <div class="selected-guides">
-          <span *ngFor="let guideId of selectedGuides">
-            {{ getGuideName(guideId) }}
-            <button type="button" (click)="removeGuide(guideId)">❌</button>
-          </span>
-        </div>
-
+      <div class="form__group  form__group--basis">
         <div class="form__group">
-          <label for="guide">Select guide</label>
-          <select formControlName="guide" id="guide">
+          <label class="form__label" for="guide">Select guide</label>
+          <select formControlName="guide" id="guide" class="wd-100">
             <option value="" disabled>Select guide</option>
             <option *ngFor="let g of guides" [value]="g.id">{{ g.name }}</option>
           </select>
-          <button type="button" (click)="addGuide()">Add</button>
         </div>
       </div>
+      <div class="form__group ma-bt-none">
+        <button type="button" (click)="addGuide()" class="btn btn--small btn--green btn--add">Add</button>
+      </div>
+      <div class="form__group selected-guides">
+        <span *ngFor="let guideId of selectedGuides">
+          {{ getGuideName(guideId) }}
+          <button type="button" class="btn--delete btn--delete-rel" (click)="removeGuide(guideId)">✖️</button>
+        </span>
+      </div>
     </fieldset>
-    <div class="form__group ma-bt-md">
-      <label for="secret">
-        <input type="checkbox" id="secret" name="secret" formControlName="secret" />
-        Secret tour
-      </label>
-    </div>
-
     <div class="form__group right">
       <button class="btn btn--small btn--green" type="submit" [disabled]="(form.invalid)">
-        Save | Update
+        Save
       </button>
     </div>
   </form>

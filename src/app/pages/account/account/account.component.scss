@@ -11,7 +11,6 @@
   display: -ms-flexbox;
   display: flex;
 
-
   &__menu {
     -webkit-box-flex: 32rem;
     -ms-flex: 32rem 0 0px;
@@ -30,6 +29,10 @@
     -ms-flex: 1;
     flex: 1;
     padding: 7rem 0;
+
+    &--wide {
+      padding: 2rem 0;
+    }
   }
 }
 

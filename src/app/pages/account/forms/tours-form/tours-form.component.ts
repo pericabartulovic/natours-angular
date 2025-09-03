@@ -85,8 +85,10 @@ export class ToursFormComponent implements OnInit {
       summary: ['', { validators: [Validators.required] }],
       description: [''],
       startLocation: this.fb.group({
-        startLong: ['', Validators.required],
-        startLat: ['', Validators.required],
+        startCoordinates: this.fb.group({
+          startLong: ['', Validators.required],
+          startLat: ['', Validators.required],
+        }),
         startAddress: ['', Validators.required],
         startDescription: [''],
       }),
@@ -111,6 +113,16 @@ export class ToursFormComponent implements OnInit {
       }
     };
     reader.readAsDataURL(file);
+  }
+
+  removeImage(type: 'cover' | number, input: HTMLInputElement): void {
+    if (type === 'cover') {
+      this.coverPreview = null;
+    } else {
+      this.imagePreviews[type] = null;
+    }
+
+    input.value = ''; // reset via reference, no document.getElementById
   }
 
   // Getter and Factory for creating a dates group
@@ -139,8 +151,10 @@ export class ToursFormComponent implements OnInit {
 
   private createLocationGroup(): FormGroup {
     return this.fb.group({
-      long: ['', Validators.required],
-      lat: ['', Validators.required],
+      coordinates: this.fb.group({
+        long: ['', Validators.required],
+        lat: ['', Validators.required],
+      }),
       address: ['', Validators.required],
       description: [''],
     });
@@ -179,5 +193,6 @@ export class ToursFormComponent implements OnInit {
     // formData.append('email', email!.trim());
     // if (photo) formData.append('photo', photo);
     // this.userService.updateMe(formData);
+    console.log(this.form.value);
   }
 }
