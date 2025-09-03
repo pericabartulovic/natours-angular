@@ -7,7 +7,7 @@ import {
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../../../services/auth.service';
-import { equalValues } from '../../../../shared/validators/equal-values.validator';
+import { equalValues } from '../../../../shared/validators/values.validator';
 import { BtnPassVisibleComponent } from '../../../../components/shared/btn-pass-visible/btn-pass-visible.component';
 
 @Component({

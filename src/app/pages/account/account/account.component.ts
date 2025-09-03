@@ -8,7 +8,7 @@ import {
 } from '@angular/forms';
 import { AuthService } from '../../../services/auth.service';
 import { UserService } from '../../../services/user.service';
-import { equalValues } from '../../../shared/validators/equal-values.validator';
+import { equalValues } from '../../../shared/validators/values.validator';
 import { SideNavComponent } from '../../../layout/side-nav/side-nav.component';
 import { BtnPassVisibleComponent } from '../../../components/shared/btn-pass-visible/btn-pass-visible.component';
 import { MatDialog } from '@angular/material/dialog';

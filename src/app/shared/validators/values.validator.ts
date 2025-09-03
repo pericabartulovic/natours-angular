@@ -12,3 +12,17 @@ export function equalValues(
     return val1 === val2 ? null : { valuesNotEqual: true };
   };
 }
+
+export function valueGreaterThan(
+  controlName1: string,
+  controlName2: string,
+): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const val1 = control.get(controlName1)?.value;
+    const val2 = control.get(controlName2)?.value;
+
+    if (val1 == null || val2 == null) return null;
+
+    return val1 > val2 ? null : { notGreater: true };
+  };
+}

@@ -1,4 +1,4 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AsyncPipe } from '@angular/common';
 import {
   FormControl,
@@ -8,34 +8,34 @@ import {
 } from '@angular/forms';
 import { AuthService } from '../../../../services/auth.service';
 import { UserService } from '../../../../services/user.service';
-import { equalValues } from '../../../../shared/validators/equal-values.validator';
-import { SideNavComponent } from '../../../../layout/side-nav/side-nav.component';
+import { equalValues } from '../../../../shared/validators/values.validator';
 import { BtnPassVisibleComponent } from '../../../../components/shared/btn-pass-visible/btn-pass-visible.component';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../../../components/shared/confirm-dialog/confirm-dialog.component';
 import { Router } from '@angular/router';
 import { User } from '../../../../models/user.model';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-account-settings-form',
-  imports: [ReactiveFormsModule, BtnPassVisibleComponent],
+  imports: [ReactiveFormsModule, BtnPassVisibleComponent, AsyncPipe],
   templateUrl: './account-settings-form.component.html',
   styleUrl: './account-settings-form.component.scss',
 })
 export class AccountSettingsFormComponent implements OnInit {
-  user: User | undefined;
-  userName = '';
-  email = '';
-  photo = '';
+  user$!: Observable<User | null>;
+  photoPreview: string | ArrayBuffer | null = null;
 
   constructor(
     public authService: AuthService,
     public userService: UserService,
     private dialog: MatDialog,
     private router: Router,
-  ) {}
+  ) {
+    this.user$ = this.authService.user$;
+  }
 
-  // User data update
+  // User data update form
   form = new FormGroup({
     name: new FormControl('', {
       validators: [Validators.required],
@@ -49,12 +49,8 @@ export class AccountSettingsFormComponent implements OnInit {
   });
 
   ngOnInit() {
-    this.authService.user$.subscribe((user) => {
+    this.user$.subscribe((user) => {
       if (user) {
-        this.user = user;
-        this.userName = user.name;
-        this.email = user.email;
-        this.photo = user.photo;
         this.form.patchValue({
           name: user.name,
           email: user.email,
@@ -70,6 +66,14 @@ export class AccountSettingsFormComponent implements OnInit {
       this.form.patchValue({ photo: file });
       this.form.get('photo')?.updateValueAndValidity();
     }
+
+    if (input) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.photoPreview = reader.result;
+      };
+      reader.readAsDataURL(input.files![0]);
+    }
   }
 
   onSubmit() {
@@ -83,7 +87,7 @@ export class AccountSettingsFormComponent implements OnInit {
     this.userService.updateMe(formData);
   }
 
-  // Password update
+  // Password update form
   formPasswords = new FormGroup(
     {
       passwordCurrent: new FormControl('', {
