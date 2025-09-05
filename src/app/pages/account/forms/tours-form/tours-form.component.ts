@@ -6,6 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import {
   FormArray,
   FormBuilder,
+  FormControl,
   FormGroup,
   ReactiveFormsModule,
   Validators,
@@ -21,7 +22,7 @@ import { NgFor, NgIf } from '@angular/common';
   selector: 'app-tours-form',
   imports: [ReactiveFormsModule, AsyncPipe, NgFor, NgIf],
   templateUrl: './tours-form.component.html',
-  styleUrl: './tours-form.component.scss',
+  styleUrls: ['./tours-form.component.scss'],
 })
 export class ToursFormComponent implements OnInit {
   user$!: Observable<User | null>;
@@ -29,12 +30,30 @@ export class ToursFormComponent implements OnInit {
   startLocation!: FormGroup;
   coverPreview: string | ArrayBuffer | null = null;
   imagePreviews: { [key: number]: string | ArrayBuffer | null } = {};
-  selectedGuides: string[] = [];
+  guideSelectControl!: FormControl;
 
   guides = [
-    { id: 'g1', name: 'Alice' },
-    { id: 'g2', name: 'Bob' },
-    { id: 'g3', name: 'Charlie' },
+    {
+      id: 'g1',
+      name: 'Alice',
+      email: 'alice@example.com',
+      photo: 'user-8.jpg',
+      role: 'lead guide',
+    },
+    {
+      id: 'g2',
+      name: 'Bob',
+      email: 'bob@example.com',
+      photo: 'user-10.jpg',
+      role: 'guide',
+    },
+    {
+      id: 'g3',
+      name: 'Charlie',
+      email: 'charlie@example.com',
+      photo: 'user-5.jpg',
+      role: 'guide',
+    },
   ];
 
   constructor(
@@ -57,46 +76,42 @@ export class ToursFormComponent implements OnInit {
     //   }
     // });
 
-    this.form = this.fb.group({
-      name: [
-        '',
-        {
-          validators: [
-            Validators.required,
-            Validators.minLength(10),
-            Validators.maxLength(40),
-          ],
-          updateOn: 'change',
-        },
-      ],
-      duration: ['', { validators: [Validators.required] }],
-      groupSize: ['', { validators: [Validators.required] }],
-      difficulty: ['', { validators: [Validators.required] }],
-      price: [
-        '',
-        {
-          validators: [
-            Validators.required,
-            valueGreaterThan('price', 'discount'),
-          ],
-        },
-      ],
-      discount: ['', { validators: [Validators.required] }],
-      summary: ['', { validators: [Validators.required] }],
-      description: [''],
-      startLocation: this.fb.group({
-        startCoordinates: this.fb.group({
-          startLong: ['', Validators.required],
-          startLat: ['', Validators.required],
+    this.form = this.fb.group(
+      {
+        name: [
+          '',
+          {
+            validators: [
+              Validators.required,
+              Validators.minLength(10),
+              Validators.maxLength(40),
+            ],
+            updateOn: 'change',
+          },
+        ],
+        duration: ['', { validators: [Validators.required] }],
+        groupSize: ['', { validators: [Validators.required] }],
+        difficulty: ['', { validators: [Validators.required] }],
+        price: ['', { validators: [Validators.required] }],
+        discount: ['', { validators: [Validators.required] }],
+        summary: ['', { validators: [Validators.required] }],
+        description: [''],
+        startLocation: this.fb.group({
+          startCoordinates: this.fb.group({
+            startLong: ['', Validators.required],
+            startLat: ['', Validators.required],
+          }),
+          startAddress: ['', Validators.required],
+          startDescription: [''],
         }),
-        startAddress: ['', Validators.required],
-        startDescription: [''],
-      }),
-      startDates: this.fb.array([this.createStartDatesGroup()]),
-      locations: this.fb.array([this.createLocationGroup()]),
-      secret: [false, { validators: [Validators.required] }],
-      guide: [''],
-    });
+        startDates: this.fb.array([this.createStartDatesGroup()]),
+        locations: this.fb.array([this.createLocationGroup()]),
+        secret: [false],
+        guides: this.fb.array([]),
+      },
+      { validators: valueGreaterThan('price', 'discount') },
+    );
+    this.guideSelectControl = this.fb.control<any>(null);
   }
 
   onFileSelected(event: Event, type: 'cover' | number): void {
@@ -152,10 +167,10 @@ export class ToursFormComponent implements OnInit {
   private createLocationGroup(): FormGroup {
     return this.fb.group({
       coordinates: this.fb.group({
-        long: ['', Validators.required],
-        lat: ['', Validators.required],
+        long: [''],
+        lat: [''],
       }),
-      address: ['', Validators.required],
+      address: [''],
       description: [''],
     });
   }
@@ -168,22 +183,37 @@ export class ToursFormComponent implements OnInit {
     this.locations.removeAt(index);
   }
 
-  // Guides:
-  getGuideName(guideId: string): string | undefined {
-    return this.guides.find((g) => g.id === guideId)?.name;
+  //  Getter and Factory for Guides:
+  get guidesArray(): FormArray {
+    return this.form.get('guides') as FormArray;
+  }
+
+  private createGuideGroup(guide: any): FormGroup {
+    return this.fb.group({
+      id: [guide.id, Validators.required],
+      name: [guide.name],
+      email: [guide.email],
+      photo: [guide.photo],
+      role: [guide.role],
+    });
   }
 
   addGuide() {
-    const guide = this.form.controls['guide'].value;
-    if (guide && !this.selectedGuides.includes(guide)) {
-      this.selectedGuides.push(guide);
+    const guide = this.guideSelectControl.value;
+    if (!guide) return;
+
+    const alreadyExists = this.guidesArray.value.some(
+      (g: any) => g.id === guide.id,
+    );
+    if (!alreadyExists) {
+      this.guidesArray.push(this.createGuideGroup(guide));
     }
-    this.form.controls['guide'].reset();
+
+    this.guideSelectControl.reset();
   }
 
-  // Remove guide
-  removeGuide(guideId: string) {
-    this.selectedGuides = this.selectedGuides.filter((g) => g !== guideId);
+  removeGuide(index: number) {
+    this.guidesArray.removeAt(index);
   }
 
   onSubmit() {
@@ -193,6 +223,10 @@ export class ToursFormComponent implements OnInit {
     // formData.append('email', email!.trim());
     // if (photo) formData.append('photo', photo);
     // this.userService.updateMe(formData);
-    console.log(this.form.value);
+    const payload = {
+      ...this.form.value,
+      guides: this.guidesArray.value,
+    };
+    console.log('Final payload:', payload);
   }
 }

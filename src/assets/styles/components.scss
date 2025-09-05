@@ -334,6 +334,13 @@
   font-size: 1.4rem;
   font-weight: 700;
   margin-bottom: 0.75rem;
+
+  &-asterisc {
+    font-size: 1.4rem;
+    vertical-align: super;
+    padding-left: 0.3rem;
+    color: #e5487a;
+  }
 }
 
 .form__photo-upload {
@@ -349,6 +356,10 @@
   &:not(:last-child) {
     margin-right: 4rem;
   }
+
+  &+label {
+    font-size: 1.6rem !important;
+  }
 }
 
 .form__user-photo,
@@ -362,6 +373,12 @@
 .form__tour-photo {
   border-radius: unset;
   margin-right: 1rem;
+}
+
+.form__guide-photo {
+  height: 5.5rem;
+  width: 5.5rem;
+  margin-right: 2rem;
 }
 
 .form__upload {
@@ -386,6 +403,9 @@
     -webkit-transition: all 0.2s;
     cursor: pointer;
     border-radius: 4px;
+    background-color: #f4e8ff;
+    border: 1px solid #da97ff;
+    font-size: 1.4rem;
 
     &:hover {
       background-color: #8001c6;
@@ -433,6 +453,7 @@ select {
   height: 4.5rem;
   border-radius: 4px;
   border: 2px solid #e7cdff;
+  background-color: #fafafa;
 
   &:focus-visible {
     outline-color: #8001c6;

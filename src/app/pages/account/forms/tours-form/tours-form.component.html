@@ -3,20 +3,20 @@
   <h2 class="heading-secondary ma-bt-md">Tour settings</h2>
   <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form form-user-data">
     <div class="form__group">
-      <label class="form__label" for="name">Name</label>
+      <label class="form__label" for="name">Name<span class="form__label-asterisc">⁎</span></label>
       <input id="name" class="form__input" type="text" formControlName="name" placeholder="min: 10 - max: 40 chars" />
     </div>
     <fieldset>
       <div class="form__group form__group--basis">
-        <label class="form__label" for="duration">Duration</label>
+        <label class="form__label" for="duration">Duration<span class="form__label-asterisc">⁎</span></label>
         <input id="duration" class="form__input" type="number" formControlName="duration" />
       </div>
       <div class="form__group form__group--basis">
-        <label class="form__label" for="group-size">Max group size</label>
+        <label class="form__label" for="group-size">Max group size<span class="form__label-asterisc">⁎</span></label>
         <input id="group-size" class="form__input" type="number" formControlName="groupSize" />
       </div>
       <div class="form__group form__group--basis">
-        <label class="form__label" for="difficulty">Difficulty</label>
+        <label class="form__label" for="difficulty">Difficulty<span class="form__label-asterisc">⁎</span></label>
         <select id="difficulty" name="difficulty" formControlName="difficulty" class="wd-100">
           <option value="easy">Easy</option>
           <option value="medium">Medium</option>
@@ -24,14 +24,14 @@
         </select>
       </div>
       <div class="form__group form__group--basis">
-        <label class="form__label" for="price">Price</label>
+        <label class="form__label" for="price">Price<span class="form__label-asterisc">⁎</span></label>
         <input id="price" class="form__input" type="number" formControlName="price" />
       </div>
       <div class="form__group form__group--basis">
         <label class="form__label" for="discount">Price discount</label>
         <input id="discount" class="form__input" type="number" formControlName="discount" />
       </div>
-      <div *ngIf="form.hasError('notGreater')">
+      <div *ngIf="form.hasError('notGreater') && form.get('discount')?.touched">
         Price must be greater than discount.
       </div>
       <div class="form__group form__group--basis form__checkbox">
@@ -42,7 +42,7 @@
 
     <fieldset class="flex--vertical">
       <div class="form__group ma-bt-md wd-100">
-        <label class="form__label" for="summary">Summary</label>
+        <label class="form__label" for="summary">Summary<span class="form__label-asterisc">⁎</span></label>
         <textarea id="summary" class="form__input" rows="2" formControlName="summary"></textarea>
       </div>
       <div class="form__group ma-bt-md wd-100">
@@ -52,6 +52,7 @@
     </fieldset>
 
     <fieldset class="flex--just-center">
+      <legend>Cover image<span class="form__label-asterisc">⁎</span>&nbsp;and tour images</legend>
       <div class="form__group form__photo-upload ma-bt-none">
         <img class="form__tour-photo" [src]="coverPreview || 'http://localhost:3000/img/tours/placeholder.png'"
           alt="Cover image preview" />
@@ -110,7 +111,7 @@
       <legend>Locations</legend>
       <div *ngFor="let loc of locations.controls; let i = index" [formGroupName]="i" class="location-group">
         <span>Location {{i + 1}}</span>
-        <div class="form__group" formGroupName="coordinates" class="coordinates">
+        <div class="form__group coordinates" formGroupName="coordinates">
           <div class="form__group">
             <label class="form__label">Longitude</label>
             <input class="form__input" type="number" formControlName="long" />
@@ -134,29 +135,35 @@
       <button type="button" class="btn btn--small btn--white btn--icon" (click)="addLocation()">➕</button>
     </fieldset>
 
-    <fieldset>
+    <fieldset formArrayName="guides">
       <legend>Guides</legend>
       <div class="form__group  form__group--basis">
         <div class="form__group">
-          <label class="form__label" for="guide">Select guide</label>
-          <select formControlName="guide" id="guide" class="wd-100">
-            <option value="" disabled>Select guide</option>
-            <option *ngFor="let g of guides" [value]="g.id">{{ g.name }}</option>
+          <label class="form__label" for="guide-select">Select a guide</label>
+          <select id="guide-select" class="wd-100" [formControl]="guideSelectControl">
+            <option [ngValue]="null" disabled></option>
+            <option *ngFor="let guide of guides" [ngValue]="guide">
+              {{ guide.name }}
+            </option>
           </select>
         </div>
       </div>
       <div class="form__group ma-bt-none">
         <button type="button" (click)="addGuide()" class="btn btn--small btn--green btn--add">Add</button>
       </div>
-      <div class="form__group selected-guides">
-        <span *ngFor="let guideId of selectedGuides">
-          {{ getGuideName(guideId) }}
-          <button type="button" class="btn--delete btn--delete-rel" (click)="removeGuide(guideId)">✖️</button>
-        </span>
+      <div class="form__group selected-guides" *ngIf="guidesArray.controls.length > 0">
+        <div *ngFor="let g of guidesArray.controls; let i = index" [formGroupName]="i">
+          <img class="form__guide-photo"
+            [src]="`http://localhost:3000/img/users/${g.value.photo}` || `http://localhost:3000/img/users/default.jpg`">
+          <span>
+            {{ g.value.name }} ({{ g.value.role }})
+          </span>
+          <button type="button" (click)="removeGuide(i)" class="btn--delete btn--delete-rel">✖️</button>
+        </div>
       </div>
     </fieldset>
     <div class="form__group right">
-      <button class="btn btn--small btn--green" type="submit" [disabled]="(form.invalid)">
+      <button class="btn btn--small btn--green" type="submit">
         Save
       </button>
     </div>
