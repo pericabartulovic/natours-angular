@@ -14,10 +14,8 @@ import {
 import { AuthService } from '../../../../services/auth.service';
 import { UserService } from '../../../../services/user.service';
 import { valueGreaterThan } from '../../../../shared/validators/values.validator';
-import { ConfirmDialogComponent } from '../../../../components/shared/confirm-dialog/confirm-dialog.component';
 import { User } from '../../../../models/user.model';
 import { ControlErrorDirective } from '../../../../shared/control-error/control-error.directive';
-import { ControlErrorComponent } from '../../../../shared/control-error/control-error/control-error.component';
 import {
   FORM_ERROR_MESSAGES,
   defaultErrorMessages,
@@ -36,6 +34,7 @@ export class ToursFormComponent implements OnInit {
   startLocation!: FormGroup;
   coverPreview: string | ArrayBuffer | null = null;
   imagePreviews: { [key: number]: string | ArrayBuffer | null } = {};
+  imageFiles: string[] = [];
   guideSelectControl!: FormControl;
 
   guides = [
@@ -66,7 +65,6 @@ export class ToursFormComponent implements OnInit {
     public authService: AuthService,
     public userService: UserService,
     private fb: FormBuilder,
-    private dialog: MatDialog,
     private router: Router,
   ) {
     this.user$ = this.authService.user$;
@@ -80,6 +78,29 @@ export class ToursFormComponent implements OnInit {
     //       email: user.email,
     //     });
     //   }
+    // });
+
+    // this.form.patchValue({
+    //   name: tour.name,
+    //   startLocation: {
+    //     long: tour.startLocation.coordinates[0],
+    //     lat: tour.startLocation.coordinates[1],
+    //     address: tour.startLocation.address,
+    //     description: tour.startLocation.description,
+    //   },
+    // });
+
+    // // Patch locations array
+    // this.locations.clear();
+    // tour.locations.forEach((loc) => {
+    //   this.locations.push(
+    //     this.fb.group({
+    //       long: loc.coordinates[0],
+    //       lat: loc.coordinates[1],
+    //       address: loc.address,
+    //       description: loc.description,
+    //     }),
+    //   );
     // });
 
     this.form = this.fb.group({
@@ -100,12 +121,14 @@ export class ToursFormComponent implements OnInit {
       prices: this.fb.group(
         {
           price: ['', { validators: [Validators.required] }],
-          discount: [''],
+          priceDiscount: [''],
         },
-        { validators: valueGreaterThan('price', 'discount') },
+        { validators: valueGreaterThan('price', 'priceDiscount') },
       ),
       summary: ['', { validators: [Validators.required] }],
       description: [''],
+      coverImage: [null, Validators.required],
+      images: this.fb.array(['', '', '']),
       startLocation: this.fb.group({
         startCoordinates: this.fb.group({
           startLong: ['', Validators.required],
@@ -128,20 +151,27 @@ export class ToursFormComponent implements OnInit {
 
     const file = input.files[0];
     const reader = new FileReader();
+
     reader.onload = () => {
       if (type === 'cover') {
         this.coverPreview = reader.result;
+        this.form.get('coverImage')?.setValue(file.name); // to update hidden control
       } else {
         this.imagePreviews[type] = reader.result;
+        this.imageFiles.push(file.name);
       }
     };
     reader.readAsDataURL(file);
   }
 
   removeImage(type: 'cover' | number): void {
-    type === 'cover'
-      ? (this.coverPreview = null)
-      : (this.imagePreviews[type] = null);
+    if (type === 'cover') {
+      this.coverPreview = null;
+      this.form.get('coverImage')?.reset();
+    } else {
+      this.imagePreviews[type] = null;
+      this.imageFiles.splice(type - 1, 1);
+    }
   }
 
   // Getter and Factory for creating a dates group
@@ -220,17 +250,76 @@ export class ToursFormComponent implements OnInit {
     this.guidesArray.removeAt(index);
   }
 
+  // SUBMIT AND PAYLOAD
+
   onSubmit() {
-    // const { name, email, photo } = this.form.value;
-    // const formData = new FormData();
-    // formData.append('name', name!.trim());
-    // formData.append('email', email!.trim());
-    // if (photo) formData.append('photo', photo);
-    // this.userService.updateMe(formData);
-    const payload = {
-      ...this.form.value,
-      guides: this.guidesArray.value,
-    };
+    const payload = this.buildPayload();
     console.log('Final payload:', payload);
+  }
+
+  private buildPayload() {
+    const fv = this.form.value;
+
+    return {
+      // Basic fields
+      name: fv.name,
+      duration: fv.duration,
+      difficulty: fv.difficulty,
+      groupSize: fv.groupSize,
+      secret: fv.secret,
+      summary: fv.summary,
+      description: fv.description,
+
+      // Price
+      price: fv.prices.price,
+      priceDiscount: fv.prices.priceDiscount,
+
+      // Images
+      coverImage: fv.coverImage,
+      images: this.imageFiles,
+
+      // Dates
+      startDates: this.formatDates(fv.startDates),
+
+      // Guides
+      guides: this.guidesArray.value,
+
+      // Locations
+      locations: this.form.value.locations
+        .map((loc: any) => {
+          const coords = this.formatCoordinates(loc.coordinates);
+          if (!coords) return null;
+          return {
+            ...loc,
+            coordinates: coords,
+          };
+        })
+        .filter(Boolean),
+
+      // Start location
+      startLocation: {
+        coordinates: this.formatCoordinates(
+          this.form.value.startLocation.startCoordinates,
+        ),
+        address: this.form.value.startLocation.startAddress || undefined,
+        description:
+          this.form.value.startLocation.startDescription || undefined,
+      },
+    };
+  }
+
+  private formatCoordinates(
+    coord: { long: string; lat: string } | null,
+  ): number[] | undefined {
+    if (!coord || !coord.long || !coord.lat) return [];
+    return [parseFloat(coord.long), parseFloat(coord.lat)];
+  }
+
+  private formatDates(dates: any[] = []): string[] | undefined {
+    if (!dates.length) return [];
+    return dates
+      .map((d) => d.date)
+      .filter(Boolean)
+      .map((d) => new Date(d).toISOString());
   }
 }

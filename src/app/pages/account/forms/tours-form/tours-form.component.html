@@ -6,6 +6,7 @@
       <label class="form__label" for="name">Name<span class="form__label--asterisc">⁎</span></label>
       <input id="name" class="form__input" type="text" formControlName="name" appControlError />
     </div>
+    <!-- BASIC DETAILS -->
     <fieldset>
       <div class="form__group form__group--basis">
         <label class="form__label" for="duration">Duration<span class="form__label--asterisc">⁎</span></label>
@@ -26,11 +27,12 @@
       <div class="form__prices-group flex--bottom-line" formGroupName="prices">
         <div class="form__group flex--grow">
           <label class="form__label" for="price">Price<span class="form__label--asterisc">⁎</span></label>
-          <input id="price" class="form__input" type="number" formControlName="price" appControlError />
+          <input id="price" class="form__input" type="number" step="any" formControlName="price" appControlError />
         </div>
         <div class="form__group flex--grow">
-          <label class="form__label" for="discount">Price discount</label>
-          <input id="discount" class="form__input" type="number" formControlName="discount" appControlError />
+          <label class="form__label" for="priceDiscount">Price priceDiscount</label>
+          <input id="priceDiscount" class="form__input" type="number" step="any" formControlName="priceDiscount"
+            appControlError />
         </div>
       </div>
       <div class="form__group form__group--basis form__checkbox">
@@ -38,7 +40,7 @@
         <label class="form__label" for="secret">Secret tour</label>
       </div>
     </fieldset>
-
+    <!-- SUMMARY AND DESCRIPTION -->
     <fieldset class="flex--vertical">
       <div class="form__group ma-bt-md wd-100">
         <label class="form__label" for="summary">Summary<span class="form__label--asterisc">⁎</span></label>
@@ -49,14 +51,14 @@
         <textarea id="description" class="form__input" rows="3" formControlName="description"></textarea>
       </div>
     </fieldset>
-
+    <!-- IMAGES -->
     <fieldset class="flex--just-center">
       <legend>Cover image<span class="form__label--asterisc">⁎</span>&nbsp;and tour images</legend>
       <div class="form__group form__photo-upload ma-bt-none">
         <img class="form__tour-photo" [src]="coverPreview || 'http://localhost:3000/img/tours/placeholder.png'"
           alt="Cover image preview" />
         @if (!coverPreview) {
-        <input #coverInput class="form__upload" type="file" accept="image/*" id="imageCover"
+        <input class="form__upload" type="file" accept="image/*" id="imageCover"
           (change)="onFileSelected($event, 'cover')" />
         }
         @if(coverPreview) {
@@ -66,8 +68,9 @@
         }
         <label for="imageCover">cover</label>
       </div>
+      <input type="hidden" formControlName="coverImage" appControlError />
       @for(img of [1,2,3]; track img) {
-      <div class="form__group form__photo-upload ma-bt-none">
+      <div class="form__group form__photo-upload ma-bt-none" formArrayName="images">
         <img class="form__tour-photo" [src]="imagePreviews[img] || 'http://localhost:3000/img/tours/placeholder.png'"
           alt="Tour image preview" />
         @if (!imagePreviews[img]) {
@@ -79,11 +82,11 @@
           ✖️
         </button>
         }
-        <label [for]="'image' + img">image {{ img }}</label>
+        <label [for]="'image' + img">image-{{ img }}</label>
       </div>
       }
     </fieldset>
-
+    <!-- DATES -->
     <fieldset formArrayName="startDates">
       <legend>Start Dates</legend>
       @for(date of startDates.controls; let i = $index; track i) {
@@ -95,17 +98,17 @@
       }
       <button type="button" class="btn btn--small btn--white btn--icon flex--al-selfc" (click)="addDate()">➕</button>
     </fieldset>
-
+    <!-- START LOCATION -->
     <fieldset formGroupName="startLocation">
       <legend>Start Location</legend>
       <div formGroupName="startCoordinates" class="coordinates">
         <div class="form__group">
           <label class="form__label" for="start-lon">Longitude</label>
-          <input id="start-lon" class="form__input" type="number" formControlName="startLong" />
+          <input id="start-lon" class="form__input" type="number" step="any" formControlName="startLong" />
         </div>
         <div class="form__group">
           <label class="form__label" for="start-lat">Latitude</label>
-          <input id="start-lat" class="form__input" type="number" formControlName="startLat" />
+          <input id="start-lat" class="form__input" type="number" step="any" formControlName="startLat" />
         </div>
       </div>
       <div class="form__group flex--grow">
@@ -117,7 +120,7 @@
         <input id="description" class="form__input" type="text" formControlName="startDescription" />
       </div>
     </fieldset>
-
+    <!-- LOCATIONS -->
     <fieldset formArrayName="locations">
       <legend>Locations</legend>
       @for(loc of locations.controls; let i = $index; track i) {
@@ -126,11 +129,11 @@
         <div class="form__group coordinates" formGroupName="coordinates">
           <div class="form__group">
             <label class="form__label">Longitude</label>
-            <input class="form__input" type="number" formControlName="long" />
+            <input class="form__input" type="number" step="any" formControlName="long" />
           </div>
           <div class="form__group">
             <label class="form__label">Latitude</label>
-            <input class="form__input" type="number" formControlName="lat" />
+            <input class="form__input" type="number" step="any" formControlName="lat" />
           </div>
         </div>
         <div class="form__group flex--grow">
@@ -147,7 +150,7 @@
       <hr>
       <button type="button" class="btn btn--small btn--white btn--icon" (click)="addLocation()">➕</button>
     </fieldset>
-
+    <!-- GUIDES -->
     <fieldset formArrayName="guides">
       <legend>Guides</legend>
       <div class="form__group  form__group--basis flex--al-selfc">

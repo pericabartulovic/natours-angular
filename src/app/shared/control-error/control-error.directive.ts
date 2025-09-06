@@ -1,6 +1,5 @@
 import {
   Directive,
-  Input,
   OnDestroy,
   OnInit,
   ViewContainerRef,
