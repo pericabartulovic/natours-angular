@@ -13,14 +13,20 @@ import {
 } from '@angular/forms';
 import { AuthService } from '../../../../services/auth.service';
 import { UserService } from '../../../../services/user.service';
+import { valueGreaterThan } from '../../../../shared/validators/values.validator';
 import { ConfirmDialogComponent } from '../../../../components/shared/confirm-dialog/confirm-dialog.component';
 import { User } from '../../../../models/user.model';
-import { valueGreaterThan } from '../../../../shared/validators/values.validator';
-import { NgFor, NgIf } from '@angular/common';
+import { ControlErrorDirective } from '../../../../shared/control-error/control-error.directive';
+import { ControlErrorComponent } from '../../../../shared/control-error/control-error/control-error.component';
+import {
+  FORM_ERROR_MESSAGES,
+  defaultErrorMessages,
+} from '../../../../shared/control-error/form-errors';
 
 @Component({
   selector: 'app-tours-form',
-  imports: [ReactiveFormsModule, AsyncPipe, NgFor, NgIf],
+  imports: [ReactiveFormsModule, AsyncPipe, ControlErrorDirective],
+  providers: [{ provide: FORM_ERROR_MESSAGES, useValue: defaultErrorMessages }],
   templateUrl: './tours-form.component.html',
   styleUrls: ['./tours-form.component.scss'],
 })
@@ -76,41 +82,43 @@ export class ToursFormComponent implements OnInit {
     //   }
     // });
 
-    this.form = this.fb.group(
-      {
-        name: [
-          '',
-          {
-            validators: [
-              Validators.required,
-              Validators.minLength(10),
-              Validators.maxLength(40),
-            ],
-            updateOn: 'change',
-          },
-        ],
-        duration: ['', { validators: [Validators.required] }],
-        groupSize: ['', { validators: [Validators.required] }],
-        difficulty: ['', { validators: [Validators.required] }],
-        price: ['', { validators: [Validators.required] }],
-        discount: ['', { validators: [Validators.required] }],
-        summary: ['', { validators: [Validators.required] }],
-        description: [''],
-        startLocation: this.fb.group({
-          startCoordinates: this.fb.group({
-            startLong: ['', Validators.required],
-            startLat: ['', Validators.required],
-          }),
-          startAddress: ['', Validators.required],
-          startDescription: [''],
+    this.form = this.fb.group({
+      name: [
+        '',
+        {
+          validators: [
+            Validators.required,
+            Validators.minLength(10),
+            Validators.maxLength(40),
+          ],
+          updateOn: 'change',
+        },
+      ],
+      duration: ['', { validators: [Validators.required] }],
+      groupSize: ['', { validators: [Validators.required] }],
+      difficulty: ['', { validators: [Validators.required] }],
+      prices: this.fb.group(
+        {
+          price: ['', { validators: [Validators.required] }],
+          discount: [''],
+        },
+        { validators: valueGreaterThan('price', 'discount') },
+      ),
+      summary: ['', { validators: [Validators.required] }],
+      description: [''],
+      startLocation: this.fb.group({
+        startCoordinates: this.fb.group({
+          startLong: ['', Validators.required],
+          startLat: ['', Validators.required],
         }),
-        startDates: this.fb.array([this.createStartDatesGroup()]),
-        locations: this.fb.array([this.createLocationGroup()]),
-        secret: [false],
-        guides: this.fb.array([]),
-      },
-      { validators: valueGreaterThan('price', 'discount') },
-    );
+        startAddress: ['', Validators.required],
+        startDescription: [''],
+      }),
+      startDates: this.fb.array([this.createStartDatesGroup()]),
+      locations: this.fb.array([this.createLocationGroup()]),
+      secret: [false],
+      guides: this.fb.array([]),
+    });
     this.guideSelectControl = this.fb.control<any>(null);
   }
 
@@ -130,14 +138,10 @@ export class ToursFormComponent implements OnInit {
     reader.readAsDataURL(file);
   }
 
-  removeImage(type: 'cover' | number, input: HTMLInputElement): void {
-    if (type === 'cover') {
-      this.coverPreview = null;
-    } else {
-      this.imagePreviews[type] = null;
-    }
-
-    input.value = ''; // reset via reference, no document.getElementById
+  removeImage(type: 'cover' | number): void {
+    type === 'cover'
+      ? (this.coverPreview = null)
+      : (this.imagePreviews[type] = null);
   }
 
   // Getter and Factory for creating a dates group

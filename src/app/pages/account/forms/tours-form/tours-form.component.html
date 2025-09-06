@@ -3,36 +3,35 @@
   <h2 class="heading-secondary ma-bt-md">Tour settings</h2>
   <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form form-user-data">
     <div class="form__group">
-      <label class="form__label" for="name">Name<span class="form__label-asterisc">⁎</span></label>
-      <input id="name" class="form__input" type="text" formControlName="name" placeholder="min: 10 - max: 40 chars" />
+      <label class="form__label" for="name">Name<span class="form__label--asterisc">⁎</span></label>
+      <input id="name" class="form__input" type="text" formControlName="name" appControlError />
     </div>
     <fieldset>
       <div class="form__group form__group--basis">
-        <label class="form__label" for="duration">Duration<span class="form__label-asterisc">⁎</span></label>
-        <input id="duration" class="form__input" type="number" formControlName="duration" />
+        <label class="form__label" for="duration">Duration<span class="form__label--asterisc">⁎</span></label>
+        <input id="duration" class="form__input" type="number" formControlName="duration" appControlError />
       </div>
       <div class="form__group form__group--basis">
-        <label class="form__label" for="group-size">Max group size<span class="form__label-asterisc">⁎</span></label>
-        <input id="group-size" class="form__input" type="number" formControlName="groupSize" />
+        <label class="form__label" for="group-size">Max group size<span class="form__label--asterisc">⁎</span></label>
+        <input id="group-size" class="form__input" type="number" formControlName="groupSize" appControlError />
       </div>
       <div class="form__group form__group--basis">
-        <label class="form__label" for="difficulty">Difficulty<span class="form__label-asterisc">⁎</span></label>
-        <select id="difficulty" name="difficulty" formControlName="difficulty" class="wd-100">
+        <label class="form__label" for="difficulty">Difficulty<span class="form__label--asterisc">⁎</span></label>
+        <select id="difficulty" name="difficulty" formControlName="difficulty" class="wd-100" appControlError>
           <option value="easy">Easy</option>
           <option value="medium">Medium</option>
           <option value="difficult">Difficult</option>
         </select>
       </div>
-      <div class="form__group form__group--basis">
-        <label class="form__label" for="price">Price<span class="form__label-asterisc">⁎</span></label>
-        <input id="price" class="form__input" type="number" formControlName="price" />
-      </div>
-      <div class="form__group form__group--basis">
-        <label class="form__label" for="discount">Price discount</label>
-        <input id="discount" class="form__input" type="number" formControlName="discount" />
-      </div>
-      <div *ngIf="form.hasError('notGreater') && form.get('discount')?.touched">
-        Price must be greater than discount.
+      <div class="form__prices-group flex--bottom-line" formGroupName="prices">
+        <div class="form__group flex--grow">
+          <label class="form__label" for="price">Price<span class="form__label--asterisc">⁎</span></label>
+          <input id="price" class="form__input" type="number" formControlName="price" appControlError />
+        </div>
+        <div class="form__group flex--grow">
+          <label class="form__label" for="discount">Price discount</label>
+          <input id="discount" class="form__input" type="number" formControlName="discount" appControlError />
+        </div>
       </div>
       <div class="form__group form__group--basis form__checkbox">
         <input type="checkbox" id="secret" class="form__input" name="secret" formControlName="secret" />
@@ -42,8 +41,8 @@
 
     <fieldset class="flex--vertical">
       <div class="form__group ma-bt-md wd-100">
-        <label class="form__label" for="summary">Summary<span class="form__label-asterisc">⁎</span></label>
-        <textarea id="summary" class="form__input" rows="2" formControlName="summary"></textarea>
+        <label class="form__label" for="summary">Summary<span class="form__label--asterisc">⁎</span></label>
+        <textarea id="summary" class="form__input" rows="2" formControlName="summary" appControlError></textarea>
       </div>
       <div class="form__group ma-bt-md wd-100">
         <label class="form__label" for="description">Description</label>
@@ -52,37 +51,49 @@
     </fieldset>
 
     <fieldset class="flex--just-center">
-      <legend>Cover image<span class="form__label-asterisc">⁎</span>&nbsp;and tour images</legend>
+      <legend>Cover image<span class="form__label--asterisc">⁎</span>&nbsp;and tour images</legend>
       <div class="form__group form__photo-upload ma-bt-none">
         <img class="form__tour-photo" [src]="coverPreview || 'http://localhost:3000/img/tours/placeholder.png'"
           alt="Cover image preview" />
+        @if (!coverPreview) {
         <input #coverInput class="form__upload" type="file" accept="image/*" id="imageCover"
           (change)="onFileSelected($event, 'cover')" />
-        <button *ngIf="coverPreview" type="button" (click)="removeImage('cover', coverInput)" class="btn--delete">
+        }
+        @if(coverPreview) {
+        <button type="button" (click)="removeImage('cover')" class="btn--delete">
           ✖️
         </button>
+        }
         <label for="imageCover">cover</label>
       </div>
-      <div class="form__group form__photo-upload ma-bt-none" *ngFor="let img of [1,2,3]">
+      @for(img of [1,2,3]; track img) {
+      <div class="form__group form__photo-upload ma-bt-none">
         <img class="form__tour-photo" [src]="imagePreviews[img] || 'http://localhost:3000/img/tours/placeholder.png'"
           alt="Tour image preview" />
-        <input #fileInput class="form__upload" type="file" accept="image/*" [id]="'image' + img"
+        @if (!imagePreviews[img]) {
+        <input class="form__upload" type="file" accept="image/*" [id]="'image' + img"
           (change)="onFileSelected($event, img)" />
-        <button *ngIf="imagePreviews[img]" type="button" (click)="removeImage(img, coverInput)" class="btn--delete">
+        }
+        @if(imagePreviews[img]) {
+        <button type="button" (click)="removeImage(img)" class="btn--delete">
           ✖️
         </button>
+        }
         <label [for]="'image' + img">image {{ img }}</label>
       </div>
+      }
     </fieldset>
 
     <fieldset formArrayName="startDates">
       <legend>Start Dates</legend>
-      <div class="form__group" *ngFor="let date of startDates.controls; let i = index" [formGroupName]="i">
+      @for(date of startDates.controls; let i = $index; track i) {
+      <div class="form__group" [formGroupName]="i">
         <label class="form__label" for="date">{{i + 1}}. start date</label>
         <input id="date" class="form__input" type="date" formControlName="date" />
         <button type="button" class="btn--delete" (click)="removeDate(i)">✖️</button>
       </div>
-      <button type="button" class="btn btn--small btn--white btn--icon" (click)="addDate()">➕</button>
+      }
+      <button type="button" class="btn btn--small btn--white btn--icon flex--al-selfc" (click)="addDate()">➕</button>
     </fieldset>
 
     <fieldset formGroupName="startLocation">
@@ -101,7 +112,7 @@
         <label class="form__label" for="address">Address</label>
         <input id="address" class="form__input" type="text" formControlName="startAddress" />
       </div>
-      <div class="form__group wd-100">
+      <div class="form__group wd-100 ma-bt-md">
         <label class="form__label" for="description">Description</label>
         <input id="description" class="form__input" type="text" formControlName="startDescription" />
       </div>
@@ -109,7 +120,8 @@
 
     <fieldset formArrayName="locations">
       <legend>Locations</legend>
-      <div *ngFor="let loc of locations.controls; let i = index" [formGroupName]="i" class="location-group">
+      @for(loc of locations.controls; let i = $index; track i) {
+      <div [formGroupName]="i" class="form__location-group br-bottom">
         <span>Location {{i + 1}}</span>
         <div class="form__group coordinates" formGroupName="coordinates">
           <div class="form__group">
@@ -131,28 +143,33 @@
         </div>
         <button type="button" class="btn--delete" (click)="removeLocation(i)">✖️</button>
       </div>
+      }
       <hr>
       <button type="button" class="btn btn--small btn--white btn--icon" (click)="addLocation()">➕</button>
     </fieldset>
 
     <fieldset formArrayName="guides">
       <legend>Guides</legend>
-      <div class="form__group  form__group--basis">
+      <div class="form__group  form__group--basis flex--al-selfc">
         <div class="form__group">
           <label class="form__label" for="guide-select">Select a guide</label>
-          <select id="guide-select" class="wd-100" [formControl]="guideSelectControl">
+          <select id="guide-select" class="wd-100" [formControl]="guideSelectControl" appControlError>
             <option [ngValue]="null" disabled></option>
-            <option *ngFor="let guide of guides" [ngValue]="guide">
+            @for (guide of guides; track guide) {
+            <option [ngValue]="guide">
               {{ guide.name }}
             </option>
+            }
           </select>
         </div>
       </div>
-      <div class="form__group ma-bt-none">
+      <div class="form__group ma-bt-none flex--al-selfc">
         <button type="button" (click)="addGuide()" class="btn btn--small btn--green btn--add">Add</button>
       </div>
-      <div class="form__group selected-guides" *ngIf="guidesArray.controls.length > 0">
-        <div *ngFor="let g of guidesArray.controls; let i = index" [formGroupName]="i">
+      @if(guidesArray.controls.length > 0) {
+      <div class="form__group selected-guides flex--al-selfc">
+        @for(g of guidesArray.controls; let i = $index; track i ) {
+        <div [formGroupName]="i">
           <img class="form__guide-photo"
             [src]="`http://localhost:3000/img/users/${g.value.photo}` || `http://localhost:3000/img/users/default.jpg`">
           <span>
@@ -160,10 +177,12 @@
           </span>
           <button type="button" (click)="removeGuide(i)" class="btn--delete btn--delete-rel">✖️</button>
         </div>
+        }
       </div>
+      }
     </fieldset>
     <div class="form__group right">
-      <button class="btn btn--small btn--green" type="submit">
+      <button class="btn btn--small btn--green" type="submit" [disabled]="form.invalid">
         Save
       </button>
     </div>

@@ -1,16 +1,22 @@
-.location-group {
+.form__location-group {
   position: relative;
   display: flex;
   column-gap: 1rem;
   flex-wrap: wrap;
   padding-top: 1rem;
-  border-bottom: 1px solid #e7cdff;
 
   &>span {
     position: absolute;
     top: -0.5rem
   }
+}
 
+.form__prices-group {
+  position: relative;
+  display: flex;
+  column-gap: 1rem;
+  flex-wrap: wrap;
+  flex-basis: 65%;
 }
 
 .coordinates {
