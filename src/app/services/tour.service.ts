@@ -16,7 +16,6 @@ export class TourService implements OnInit {
   constructor(
     private http: HttpClient,
     @Inject(API_URL) private apiUrl: string,
-    private notificationService: NotificationService,
   ) {}
 
   ngOnInit(): void {
