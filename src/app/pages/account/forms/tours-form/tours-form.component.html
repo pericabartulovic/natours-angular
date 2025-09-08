@@ -13,8 +13,9 @@
         <input id="duration" class="form__input" type="number" formControlName="duration" appControlError />
       </div>
       <div class="form__group form__group--basis">
-        <label class="form__label" for="group-size">Max group size<span class="form__label--asterisc">⁎</span></label>
-        <input id="group-size" class="form__input" type="number" formControlName="groupSize" appControlError />
+        <label class="form__label" for="max-group-size">Max group size<span
+            class="form__label--asterisc">⁎</span></label>
+        <input id="max-group-size" class="form__input" type="number" formControlName="maxGroupSize" appControlError />
       </div>
       <div class="form__group form__group--basis">
         <label class="form__label" for="difficulty">Difficulty<span class="form__label--asterisc">⁎</span></label>
@@ -30,7 +31,7 @@
           <input id="price" class="form__input" type="number" step="any" formControlName="price" appControlError />
         </div>
         <div class="form__group flex--grow">
-          <label class="form__label" for="priceDiscount">Price priceDiscount</label>
+          <label class="form__label" for="priceDiscount">Discount price</label>
           <input id="priceDiscount" class="form__input" type="number" step="any" formControlName="priceDiscount"
             appControlError />
         </div>
@@ -68,7 +69,7 @@
         }
         <label for="imageCover">cover</label>
       </div>
-      <input type="hidden" formControlName="coverImage" appControlError />
+      <input type="hidden" formControlName="imageCover" appControlError />
       @for(img of [1,2,3]; track img) {
       <div class="form__group form__photo-upload ma-bt-none" formArrayName="images">
         <img class="form__tour-photo" [src]="imagePreviews[img] || 'http://localhost:3000/img/tours/placeholder.png'"
@@ -104,11 +105,11 @@
       <div formGroupName="startCoordinates" class="coordinates">
         <div class="form__group">
           <label class="form__label" for="start-lon">Longitude</label>
-          <input id="start-lon" class="form__input" type="number" step="any" formControlName="startLong" />
+          <input id="start-lon" class="form__input" type="number" step="any" formControlName="lng" />
         </div>
         <div class="form__group">
           <label class="form__label" for="start-lat">Latitude</label>
-          <input id="start-lat" class="form__input" type="number" step="any" formControlName="startLat" />
+          <input id="start-lat" class="form__input" type="number" step="any" formControlName="lat" />
         </div>
       </div>
       <div class="form__group flex--grow">
@@ -129,7 +130,7 @@
         <div class="form__group coordinates" formGroupName="coordinates">
           <div class="form__group">
             <label class="form__label">Longitude</label>
-            <input class="form__input" type="number" step="any" formControlName="long" />
+            <input class="form__input" type="number" step="any" formControlName="lng" />
           </div>
           <div class="form__group">
             <label class="form__label">Latitude</label>

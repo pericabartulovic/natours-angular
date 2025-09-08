@@ -26,7 +26,7 @@ export class MapBoxComponent implements AfterViewInit {
     mapboxgl.accessToken = this.MAPBOX_TOKEN;
     const mapInstance = new mapboxgl.Map({
       container: this.mapContainer.nativeElement,
-      style: 'mapbox://styles/pericab35/cmd0xcb9j009301s9fh3w0k74',
+      style: 'mapbox://styles/pericab35/cmfb29hfx004401sj73nj9d1j',
       scrollZoom: false,
       doubleClickZoom: false,
       // center: props.locations[0].coordinates,

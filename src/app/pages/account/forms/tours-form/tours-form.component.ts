@@ -12,14 +12,17 @@ import {
   Validators,
 } from '@angular/forms';
 import { AuthService } from '../../../../services/auth.service';
+import { TourService } from '../../../../services/tour.service';
+import { Tour } from '../../../../models/tour.model';
 import { UserService } from '../../../../services/user.service';
-import { valueGreaterThan } from '../../../../shared/validators/values.validator';
 import { User } from '../../../../models/user.model';
+import { valueGreaterThan } from '../../../../shared/validators/values.validator';
 import { ControlErrorDirective } from '../../../../shared/control-error/control-error.directive';
 import {
   FORM_ERROR_MESSAGES,
   defaultErrorMessages,
 } from '../../../../shared/control-error/form-errors';
+import { NotificationService } from '../../../../services/notification.service';
 
 @Component({
   selector: 'app-tours-form',
@@ -39,21 +42,21 @@ export class ToursFormComponent implements OnInit {
 
   guides = [
     {
-      id: 'g1',
+      id: '5c8a21f22f8fb814b56fa18a',
       name: 'Alice',
       email: 'alice@example.com',
       photo: 'user-8.jpg',
       role: 'lead guide',
     },
     {
-      id: 'g2',
+      id: '5c8a201e2f8fb814b56fa186',
       name: 'Bob',
       email: 'bob@example.com',
       photo: 'user-10.jpg',
       role: 'guide',
     },
     {
-      id: 'g3',
+      id: '5c8a23412f8fb814b56fa18c',
       name: 'Charlie',
       email: 'charlie@example.com',
       photo: 'user-5.jpg',
@@ -63,7 +66,9 @@ export class ToursFormComponent implements OnInit {
 
   constructor(
     public authService: AuthService,
+    public tourService: TourService,
     public userService: UserService,
+    private notificationService: NotificationService,
     private fb: FormBuilder,
     private router: Router,
   ) {
@@ -116,7 +121,7 @@ export class ToursFormComponent implements OnInit {
         },
       ],
       duration: ['', { validators: [Validators.required] }],
-      groupSize: ['', { validators: [Validators.required] }],
+      maxGroupSize: ['', { validators: [Validators.required] }],
       difficulty: ['', { validators: [Validators.required] }],
       prices: this.fb.group(
         {
@@ -127,14 +132,14 @@ export class ToursFormComponent implements OnInit {
       ),
       summary: ['', { validators: [Validators.required] }],
       description: [''],
-      coverImage: [null, Validators.required],
-      images: this.fb.array(['', '', '']),
+      imageCover: [null, Validators.required],
+      images: this.fb.array([], Validators.minLength(1)),
       startLocation: this.fb.group({
         startCoordinates: this.fb.group({
-          startLong: ['', Validators.required],
-          startLat: ['', Validators.required],
+          lng: [''],
+          lat: [''],
         }),
-        startAddress: ['', Validators.required],
+        startAddress: [''],
         startDescription: [''],
       }),
       startDates: this.fb.array([this.createStartDatesGroup()]),
@@ -155,7 +160,7 @@ export class ToursFormComponent implements OnInit {
     reader.onload = () => {
       if (type === 'cover') {
         this.coverPreview = reader.result;
-        this.form.get('coverImage')?.setValue(file.name); // to update hidden control
+        this.form.get('imageCover')?.setValue(file.name); // to update hidden control
       } else {
         this.imagePreviews[type] = reader.result;
         this.imageFiles.push(file.name);
@@ -181,7 +186,7 @@ export class ToursFormComponent implements OnInit {
 
   private createStartDatesGroup(): FormGroup {
     return this.fb.group({
-      date: ['', Validators.required],
+      date: [''],
     });
   }
 
@@ -201,7 +206,7 @@ export class ToursFormComponent implements OnInit {
   private createLocationGroup(): FormGroup {
     return this.fb.group({
       coordinates: this.fb.group({
-        long: [''],
+        lng: [''],
         lat: [''],
       }),
       address: [''],
@@ -252,9 +257,35 @@ export class ToursFormComponent implements OnInit {
 
   // SUBMIT AND PAYLOAD
 
+  //third party images!!!!!!!!!!!!!!!!!!!
   onSubmit() {
+    if (this.form.invalid) return;
+
     const payload = this.buildPayload();
-    console.log('Final payload:', payload);
+
+    this.tourService.saveNewTour(payload).subscribe({
+      next: () => {
+        this.notificationService.notify({
+          message: 'New tour created',
+          type: 'success',
+        });
+
+        this.form.reset();
+        this.coverPreview = null;
+        this.imagePreviews = {};
+        this.imageFiles = [];
+        this.guidesArray.clear();
+      },
+      error: (err: { error: { message: string } }) => {
+        const backendMessage =
+          err?.error?.message ||
+          'Something went wrong during creating the tour, please try again.';
+        this.notificationService.notify({
+          message: backendMessage,
+          type: 'error',
+        });
+      },
+    });
   }
 
   private buildPayload() {
@@ -265,7 +296,7 @@ export class ToursFormComponent implements OnInit {
       name: fv.name,
       duration: fv.duration,
       difficulty: fv.difficulty,
-      groupSize: fv.groupSize,
+      maxGroupSize: fv.maxGroupSize,
       secret: fv.secret,
       summary: fv.summary,
       description: fv.description,
@@ -275,29 +306,32 @@ export class ToursFormComponent implements OnInit {
       priceDiscount: fv.prices.priceDiscount,
 
       // Images
-      coverImage: fv.coverImage,
+      imageCover: fv.imageCover,
       images: this.imageFiles,
 
       // Dates
       startDates: this.formatDates(fv.startDates),
 
       // Guides
-      guides: this.guidesArray.value,
+      guides: this.guidesArray.value.map((g: any) => g._id || g.id),
 
       // Locations
       locations: this.form.value.locations
-        .map((loc: any) => {
+        .map((loc: any, i: number) => {
           const coords = this.formatCoordinates(loc.coordinates);
           if (!coords) return null;
           return {
             ...loc,
+            type: 'Point',
             coordinates: coords,
+            day: i + 1,
           };
         })
         .filter(Boolean),
 
       // Start location
       startLocation: {
+        type: 'Point',
         coordinates: this.formatCoordinates(
           this.form.value.startLocation.startCoordinates,
         ),
@@ -309,10 +343,10 @@ export class ToursFormComponent implements OnInit {
   }
 
   private formatCoordinates(
-    coord: { long: string; lat: string } | null,
+    coord: { lng: string; lat: string } | null,
   ): number[] | undefined {
-    if (!coord || !coord.long || !coord.lat) return [];
-    return [parseFloat(coord.long), parseFloat(coord.lat)];
+    if (!coord || !coord.lng || !coord.lat) return [];
+    return [parseFloat(coord.lng), parseFloat(coord.lat)];
   }
 
   private formatDates(dates: any[] = []): string[] | undefined {
