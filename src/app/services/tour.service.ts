@@ -23,8 +23,8 @@ export class TourService implements OnInit {
     // console.log(this.tour);
   }
 
-  saveNewTour(payload: any) {
-    return this.http.post(`${this.apiUrl}/tours`, payload, {
+  saveNewTour(formData: FormData) {
+    return this.http.post(`${this.apiUrl}/tours`, formData, {
       withCredentials: true,
     });
   }

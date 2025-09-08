@@ -35,9 +35,10 @@ export class ToursFormComponent implements OnInit {
   user$!: Observable<User | null>;
   form!: FormGroup;
   startLocation!: FormGroup;
+  coverFile?: File;
+  imageFiles: File[] = [];
   coverPreview: string | ArrayBuffer | null = null;
   imagePreviews: { [key: number]: string | ArrayBuffer | null } = {};
-  imageFiles: string[] = [];
   guideSelectControl!: FormControl;
 
   guides = [
@@ -126,7 +127,7 @@ export class ToursFormComponent implements OnInit {
       prices: this.fb.group(
         {
           price: ['', { validators: [Validators.required] }],
-          priceDiscount: [''],
+          priceDiscount: ['0'],
         },
         { validators: valueGreaterThan('price', 'priceDiscount') },
       ),
@@ -160,10 +161,12 @@ export class ToursFormComponent implements OnInit {
     reader.onload = () => {
       if (type === 'cover') {
         this.coverPreview = reader.result;
-        this.form.get('imageCover')?.setValue(file.name); // to update hidden control
+        this.coverFile = file;
+        this.form.get('imageCover')?.setValue(file.name); // just for display / hidden control
       } else {
         this.imagePreviews[type] = reader.result;
-        this.imageFiles.push(file.name);
+        this.imageFiles[type] = file;
+        // this.form.get('image')?.setValue(file.name); // optional, for hidden control
       }
     };
     reader.readAsDataURL(file);
@@ -172,10 +175,12 @@ export class ToursFormComponent implements OnInit {
   removeImage(type: 'cover' | number): void {
     if (type === 'cover') {
       this.coverPreview = null;
-      this.form.get('coverImage')?.reset();
+      this.coverFile = undefined;
+      this.form.get('imageCover')?.reset();
     } else {
       this.imagePreviews[type] = null;
-      this.imageFiles.splice(type - 1, 1);
+      this.imageFiles.splice(type, 1);
+      // this.form.get('image')?.reset(); // optional, if a hidden control
     }
   }
 
@@ -256,10 +261,8 @@ export class ToursFormComponent implements OnInit {
   }
 
   // SUBMIT AND PAYLOAD
-
-  //third party images!!!!!!!!!!!!!!!!!!!
   onSubmit() {
-    if (this.form.invalid) return;
+    // if (this.form.invalid) return;
 
     const payload = this.buildPayload();
 
@@ -283,70 +286,76 @@ export class ToursFormComponent implements OnInit {
         this.notificationService.notify({
           message: backendMessage,
           type: 'error',
+          duration: 8000,
         });
       },
     });
   }
 
-  private buildPayload() {
+  private buildPayload(): FormData {
     const fv = this.form.value;
+    const formData = new FormData();
 
-    return {
-      // Basic fields
-      name: fv.name,
-      duration: fv.duration,
-      difficulty: fv.difficulty,
-      maxGroupSize: fv.maxGroupSize,
-      secret: fv.secret,
-      summary: fv.summary,
-      description: fv.description,
+    // Basic fields
+    [
+      'name',
+      'duration',
+      'difficulty',
+      'maxGroupSize',
+      'secret',
+      'summary',
+      'description',
+    ].forEach((key) => {
+      formData.append(key, fv[key]);
+    });
 
-      // Price
-      price: fv.prices.price,
-      priceDiscount: fv.prices.priceDiscount,
+    // Price
+    formData.append('price', fv.prices.price);
+    formData.append('priceDiscount', fv.prices.priceDiscount);
 
-      // Images
-      imageCover: fv.imageCover,
-      images: this.imageFiles,
+    // Images
+    if (this.coverFile) formData.append('imageCover', this.coverFile);
+    this.imageFiles.forEach((file) => formData.append('images', file));
 
-      // Dates
-      startDates: this.formatDates(fv.startDates),
+    // Dates
+    const formattedDates = this.formatDates(fv.startDates);
+    formattedDates?.forEach((date) => formData.append('startDates', date));
 
-      // Guides
-      guides: this.guidesArray.value.map((g: any) => g._id || g.id),
+    // Guides
+    this.guidesArray.value.forEach((g: any) =>
+      formData.append('guides', g._id || g.id),
+    );
 
-      // Locations
-      locations: this.form.value.locations
-        .map((loc: any, i: number) => {
-          const coords = this.formatCoordinates(loc.coordinates);
-          if (!coords) return null;
-          return {
-            ...loc,
-            type: 'Point',
-            coordinates: coords,
-            day: i + 1,
-          };
-        })
-        .filter(Boolean),
+    // Locations — send as objects, not JSON strings
+    fv.locations.forEach((loc: any, i: number) => {
+      formData.append(`locations[${i}][type]`, 'Point');
+      formData.append(`locations[${i}][coordinates][]`, loc.coordinates.lng);
+      formData.append(`locations[${i}][coordinates][]`, loc.coordinates.lat);
+      formData.append(`locations[${i}][address]`, loc.address || '');
+      formData.append(`locations[${i}][description]`, loc.description || '');
+      formData.append(`locations[${i}][day]`, (i + 1).toString());
+    });
 
-      // Start location
-      startLocation: {
-        type: 'Point',
-        coordinates: this.formatCoordinates(
-          this.form.value.startLocation.startCoordinates,
-        ),
-        address: this.form.value.startLocation.startAddress || undefined,
-        description:
-          this.form.value.startLocation.startDescription || undefined,
-      },
-    };
-  }
+    // Start location
+    formData.append('startLocation[type]', 'Point');
+    formData.append(
+      'startLocation[coordinates][]',
+      fv.startLocation.startCoordinates.lng,
+    );
+    formData.append(
+      'startLocation[coordinates][]',
+      fv.startLocation.startCoordinates.lat,
+    );
+    formData.append(
+      'startLocation[address]',
+      fv.startLocation.startAddress || '',
+    );
+    formData.append(
+      'startLocation[description]',
+      fv.startLocation.startDescription || '',
+    );
 
-  private formatCoordinates(
-    coord: { lng: string; lat: string } | null,
-  ): number[] | undefined {
-    if (!coord || !coord.lng || !coord.lat) return [];
-    return [parseFloat(coord.lng), parseFloat(coord.lat)];
+    return formData;
   }
 
   private formatDates(dates: any[] = []): string[] | undefined {

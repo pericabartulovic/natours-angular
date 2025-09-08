@@ -27,11 +27,9 @@ export function valueGreaterThan(
     if (val1 == null || val2 == null) return null;
 
     if (val1 != null && val2 != null && val1 <= val2) {
-      // ❌ set error on discount field
       elToCheck!.setErrors({ notGreater: true });
       return { notGreater: true };
     } else {
-      // ✅ clear error if condition passes
       if (elToCheck!.hasError('notGreater')) {
         elToCheck!.setErrors(null);
         elToCheck!.updateValueAndValidity({
