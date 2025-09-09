@@ -228,7 +228,7 @@ export class ToursFormComponent implements OnInit {
     if (!guide) return;
 
     const alreadyExists = this.guidesArray.value.some(
-      (g: any) => g._id === guide.id,
+      (g: any) => g.id === guide._id,
     );
     if (!alreadyExists) {
       this.guidesArray.push(this.createGuideGroup(guide));

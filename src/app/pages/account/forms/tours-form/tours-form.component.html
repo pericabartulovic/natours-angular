@@ -3,22 +3,22 @@
   <h2 class="heading-secondary ma-bt-md">Tour settings</h2>
   <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form form-user-data">
     <div class="form__group">
-      <label class="form__label" for="name">Name<span class="form__label--asterisc">⁎</span></label>
+      <label class="form__label" for="name">Name<span class="form__label--asterisk">⁎</span></label>
       <input id="name" class="form__input" type="text" formControlName="name" appControlError />
     </div>
     <!-- BASIC DETAILS -->
     <fieldset>
       <div class="form__group form__group--basis">
-        <label class="form__label" for="duration">Duration<span class="form__label--asterisc">⁎</span></label>
+        <label class="form__label" for="duration">Duration<span class="form__label--asterisk">⁎</span></label>
         <input id="duration" class="form__input" type="number" formControlName="duration" appControlError />
       </div>
       <div class="form__group form__group--basis">
         <label class="form__label" for="max-group-size">Max group size<span
-            class="form__label--asterisc">⁎</span></label>
+            class="form__label--asterisk">⁎</span></label>
         <input id="max-group-size" class="form__input" type="number" formControlName="maxGroupSize" appControlError />
       </div>
       <div class="form__group form__group--basis">
-        <label class="form__label" for="difficulty">Difficulty<span class="form__label--asterisc">⁎</span></label>
+        <label class="form__label" for="difficulty">Difficulty<span class="form__label--asterisk">⁎</span></label>
         <select id="difficulty" name="difficulty" formControlName="difficulty" class="wd-100" appControlError>
           <option value="easy">Easy</option>
           <option value="medium">Medium</option>
@@ -27,7 +27,7 @@
       </div>
       <div class="form__prices-group flex--bottom-line" formGroupName="prices">
         <div class="form__group flex--grow">
-          <label class="form__label" for="price">Price<span class="form__label--asterisc">⁎</span></label>
+          <label class="form__label" for="price">Price<span class="form__label--asterisk">⁎</span></label>
           <input id="price" class="form__input" type="number" step="any" formControlName="price" appControlError />
         </div>
         <div class="form__group flex--grow">
@@ -44,7 +44,7 @@
     <!-- SUMMARY AND DESCRIPTION -->
     <fieldset class="flex--vertical">
       <div class="form__group ma-bt-md wd-100">
-        <label class="form__label" for="summary">Summary<span class="form__label--asterisc">⁎</span></label>
+        <label class="form__label" for="summary">Summary<span class="form__label--asterisk">⁎</span></label>
         <textarea id="summary" class="form__input" rows="2" formControlName="summary" appControlError></textarea>
       </div>
       <div class="form__group ma-bt-md wd-100">
@@ -54,7 +54,7 @@
     </fieldset>
     <!-- IMAGES -->
     <fieldset class="flex--just-center">
-      <legend>Cover image<span class="form__label--asterisc">⁎</span>&nbsp;and tour images</legend>
+      <legend>Cover image and tour images<span class="form__label--asterisk">⁎</span></legend>
       <div class="form__group form__photo-upload ma-bt-none">
         <img class="form__tour-photo" [src]="coverPreview || 'http://localhost:3000/img/tours/placeholder.png'"
           alt="Cover image preview" />
@@ -83,7 +83,7 @@
           ✖️
         </button>
         }
-        <label [for]="'image' + img">image-{{ img }}</label>
+        <label [for]="'image' + img">image {{ img }}</label>
       </div>
       }
     </fieldset>
