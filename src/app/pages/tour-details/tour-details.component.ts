@@ -1,9 +1,9 @@
-import { Component, inject, input, OnInit } from '@angular/core';
-import { catchError, map, Observable, of, tap } from 'rxjs';
+import { Component, input, OnInit } from '@angular/core';
+import { catchError, Observable, of, tap } from 'rxjs';
 import { AsyncPipe, DatePipe } from '@angular/common';
 import { Title } from '@angular/platform-browser';
-import { ApiService } from '../../services/api.service';
 import { Tour } from '../../models/tour.model';
+import { TourService } from '../../services/tour.service';
 import { OverviewBoxComponent } from '../../components/overview-box/overview-box.component';
 import { SplitStringPipe } from '../../pipes/split.pipe';
 import { ReviewCardComponent } from '../../components/review-card/review-card.component';
@@ -31,13 +31,13 @@ export class TourDetailsComponent implements OnInit {
   descriptionParagraphs: String[] = [];
 
   constructor(
-    private apiService: ApiService,
+    private tourService: TourService,
     private title: Title,
   ) {}
 
   ngOnInit(): void {
     this.loading = true;
-    this.$tour = this.apiService.getTourById(this.tourId()).pipe(
+    this.$tour = this.tourService.getTourById(this.tourId()).pipe(
       tap((tour) => {
         this.loading = false; // clear loading on success
         // Set document title dynamically

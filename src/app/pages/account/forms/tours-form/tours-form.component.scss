@@ -26,12 +26,18 @@
 
 .selected-guides {
   display: flex;
+  font-size: 1.6rem;
   flex-direction: column;
   align-content: flex-start;
   flex-wrap: wrap;
   align-items: flex-start;
+  row-gap: 1rem;
   padding-left: 5rem;
-  font-size: 1.6rem;
+
+  &--guide {
+    display: flex;
+    align-items: center;
+  }
 }
 
 .btn--add {

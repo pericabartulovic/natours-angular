@@ -33,6 +33,7 @@ import { NotificationService } from '../../../../services/notification.service';
 })
 export class ToursFormComponent implements OnInit {
   user$!: Observable<User | null>;
+  guides$!: Observable<User[] | null>;
   form!: FormGroup;
   startLocation!: FormGroup;
   coverFile?: File;
@@ -40,30 +41,6 @@ export class ToursFormComponent implements OnInit {
   coverPreview: string | ArrayBuffer | null = null;
   imagePreviews: { [key: number]: string | ArrayBuffer | null } = {};
   guideSelectControl!: FormControl;
-
-  guides = [
-    {
-      id: '5c8a21f22f8fb814b56fa18a',
-      name: 'Alice',
-      email: 'alice@example.com',
-      photo: 'user-8.jpg',
-      role: 'lead guide',
-    },
-    {
-      id: '5c8a201e2f8fb814b56fa186',
-      name: 'Bob',
-      email: 'bob@example.com',
-      photo: 'user-10.jpg',
-      role: 'guide',
-    },
-    {
-      id: '5c8a23412f8fb814b56fa18c',
-      name: 'Charlie',
-      email: 'charlie@example.com',
-      photo: 'user-5.jpg',
-      role: 'guide',
-    },
-  ];
 
   constructor(
     public authService: AuthService,
@@ -74,9 +51,13 @@ export class ToursFormComponent implements OnInit {
     private router: Router,
   ) {
     this.user$ = this.authService.user$;
+    this.guides$ = this.userService.guides$;
   }
 
   ngOnInit() {
+    // TODO: FETCH GUIDES
+    this.userService.getGuides();
+
     // this.user$.subscribe((user) => {
     //   if (user) {
     //     this.form.patchValue({
@@ -234,7 +215,7 @@ export class ToursFormComponent implements OnInit {
 
   private createGuideGroup(guide: any): FormGroup {
     return this.fb.group({
-      id: [guide.id, Validators.required],
+      id: [guide._id, Validators.required],
       name: [guide.name],
       email: [guide.email],
       photo: [guide.photo],
@@ -247,7 +228,7 @@ export class ToursFormComponent implements OnInit {
     if (!guide) return;
 
     const alreadyExists = this.guidesArray.value.some(
-      (g: any) => g.id === guide.id,
+      (g: any) => g._id === guide.id,
     );
     if (!alreadyExists) {
       this.guidesArray.push(this.createGuideGroup(guide));
@@ -262,11 +243,11 @@ export class ToursFormComponent implements OnInit {
 
   // SUBMIT AND PAYLOAD
   onSubmit() {
-    // if (this.form.invalid) return;
+    if (this.form.invalid) return;
 
     const payload = this.buildPayload();
 
-    this.tourService.saveNewTour(payload).subscribe({
+    this.tourService.createTour(payload).subscribe({
       next: () => {
         this.notificationService.notify({
           message: 'New tour created',

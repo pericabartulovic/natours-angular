@@ -1,5 +1,12 @@
 import { Inject, Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, switchMap, tap } from 'rxjs';
+import {
+  BehaviorSubject,
+  map,
+  Observable,
+  switchMap,
+  tap,
+  throwError,
+} from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { User } from '../models/user.model';
 import { API_URL } from '../api-url.token';
@@ -12,9 +19,11 @@ import { AuthService } from './auth.service';
 export class UserService {
   private isLoggedInSubject = new BehaviorSubject<boolean>(false);
   private userSubject = new BehaviorSubject<User | null>(null);
+  private guidesSubject = new BehaviorSubject<User[] | null>(null);
 
   isLoggedIn$: Observable<boolean> = this.isLoggedInSubject.asObservable();
   user$: Observable<User | null> = this.userSubject.asObservable();
+  guides$: Observable<User[] | null> = this.guidesSubject.asObservable();
 
   constructor(
     private http: HttpClient,
@@ -69,5 +78,28 @@ export class UserService {
           });
         }),
       );
+  }
+
+  getGuides() {
+    this.http
+      .get<{
+        status: string;
+        guides: User[];
+      }>(`${this.apiUrl}/users/guides`, { withCredentials: true })
+      .pipe(map((response) => response.guides))
+      .subscribe({
+        next: (guides) => {
+          this.guidesSubject.next(guides);
+        },
+        error: (err) => {
+          const backendMessage =
+            err?.error?.message ||
+            'Something went wrong during fetching guides.';
+          this.notificationService.notify({
+            message: backendMessage,
+            type: 'error',
+          });
+        },
+      });
   }
 }

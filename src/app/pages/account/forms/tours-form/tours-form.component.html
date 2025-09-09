@@ -154,15 +154,16 @@
     <!-- GUIDES -->
     <fieldset formArrayName="guides">
       <legend>Guides</legend>
-      <div class="form__group  form__group--basis flex--al-selfc">
+      <div class="form__group--basis flex--al-selfc">
         <div class="form__group">
-          <label class="form__label" for="guide-select">Select a guide</label>
           <select id="guide-select" class="wd-100" [formControl]="guideSelectControl" appControlError>
-            <option [ngValue]="null" disabled></option>
-            @for (guide of guides; track guide) {
+            <option [ngValue]="null" disabled selected>-- Select a guide --</option>
+            @if(guides$ | async; as guides) {
+            @for (guide of guides; track guide._id) {
             <option [ngValue]="guide">
               {{ guide.name }}
             </option>
+            }
             }
           </select>
         </div>
@@ -173,7 +174,7 @@
       @if(guidesArray.controls.length > 0) {
       <div class="form__group selected-guides flex--al-selfc">
         @for(g of guidesArray.controls; let i = $index; track i ) {
-        <div [formGroupName]="i">
+        <div [formGroupName]="i" class="selected-guides--guide">
           <img class="form__guide-photo"
             [src]="`http://localhost:3000/img/users/${g.value.photo}` || `http://localhost:3000/img/users/default.jpg`">
           <span>
