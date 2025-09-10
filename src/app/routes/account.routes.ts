@@ -14,6 +14,7 @@ export const accRoutes: Routes = [
   { path: 'my-reviews', component: MyReviewsFormComponent },
   { path: 'billing', component: BillingFormComponent },
   { path: 'tours', component: ToursFormComponent },
+  { path: 'tours/:tourId', component: ToursFormComponent },
   { path: 'users', component: UsersFormComponent },
   { path: 'reviews', component: ReviewsFormComponent },
   { path: 'bookings', component: BookingsFormComponent },

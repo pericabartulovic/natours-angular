@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, DestroyRef, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { AsyncPipe } from '@angular/common';
-import { Observable } from 'rxjs';
-import { MatDialog } from '@angular/material/dialog';
+import { Observable, skip } from 'rxjs';
 import {
   FormArray,
   FormBuilder,
@@ -34,6 +34,7 @@ import { NotificationService } from '../../../../services/notification.service';
 export class ToursFormComponent implements OnInit {
   user$!: Observable<User | null>;
   guides$!: Observable<User[] | null>;
+  tourId: string | null = '';
   form!: FormGroup;
   startLocation!: FormGroup;
   coverFile?: File;
@@ -48,48 +49,15 @@ export class ToursFormComponent implements OnInit {
     public userService: UserService,
     private notificationService: NotificationService,
     private fb: FormBuilder,
-    private router: Router,
+    private activatedRoute: ActivatedRoute,
+    private destroyRef: DestroyRef,
   ) {
     this.user$ = this.authService.user$;
     this.guides$ = this.userService.guides$;
+    this.tourId = this.activatedRoute.snapshot.paramMap.get('tourId');
   }
 
   ngOnInit() {
-    // TODO: FETCH GUIDES
-    this.userService.getGuides();
-
-    // this.user$.subscribe((user) => {
-    //   if (user) {
-    //     this.form.patchValue({
-    //       name: user.name,
-    //       email: user.email,
-    //     });
-    //   }
-    // });
-
-    // this.form.patchValue({
-    //   name: tour.name,
-    //   startLocation: {
-    //     long: tour.startLocation.coordinates[0],
-    //     lat: tour.startLocation.coordinates[1],
-    //     address: tour.startLocation.address,
-    //     description: tour.startLocation.description,
-    //   },
-    // });
-
-    // // Patch locations array
-    // this.locations.clear();
-    // tour.locations.forEach((loc) => {
-    //   this.locations.push(
-    //     this.fb.group({
-    //       long: loc.coordinates[0],
-    //       lat: loc.coordinates[1],
-    //       address: loc.address,
-    //       description: loc.description,
-    //     }),
-    //   );
-    // });
-
     this.form = this.fb.group({
       name: [
         '',
@@ -125,11 +93,76 @@ export class ToursFormComponent implements OnInit {
         startDescription: [''],
       }),
       startDates: this.fb.array([this.createStartDatesGroup()]),
-      locations: this.fb.array([this.createLocationGroup()]),
+      locations: this.fb.array([]),
       secret: [false],
       guides: this.fb.array([]),
     });
     this.guideSelectControl = this.fb.control<any>(null);
+    this.userService.getGuides();
+
+    if (this.tourId) {
+      this.tourService.getTourById(this.tourId);
+      const subscription = this.tourService.tour$.pipe(skip(1)).subscribe({
+        next: (tour) => {
+          if (tour) {
+            this.form.patchValue({
+              name: tour.name,
+              duration: tour.duration,
+              difficulty: tour.difficulty,
+              maxGroupSize: tour.maxGroupSize,
+              prices: {
+                price: tour.price,
+                priceDiscount: tour.priceDiscount,
+              },
+              secret: tour.secretTour,
+              summary: tour.summary,
+              description: tour.description,
+            });
+            this.locations.clear();
+            tour.locations.forEach((loc, i) => {
+              this.locations.push(
+                this.fb.group({
+                  coordinates: this.fb.group({
+                    lng: loc.coordinates[0],
+                    lat: loc.coordinates[1],
+                  }),
+                  address: loc.address,
+                  description: loc.description,
+                }),
+              );
+            });
+          }
+        },
+      });
+      this.destroyRef.onDestroy(() => {
+        subscription.unsubscribe();
+      });
+    } else {
+      this.locations.push(this.createLocationGroup());
+    }
+
+    // this.form.patchValue({
+    //   name: tour.name,
+    //   startLocation: {
+    //     long: tour.startLocation.coordinates[0],
+    //     lat: tour.startLocation.coordinates[1],
+    //     address: tour.startLocation.address,
+    //     description: tour.startLocation.description,
+    //   },
+    // });
+
+    // // Patch locations array
+    // this.locations.clear();
+    // tour.locations.forEach((loc) => {
+    //   this.locations.push(
+    //     this.fb.group({
+    //       long: loc.coordinates[0],
+    //       lat: loc.coordinates[1],
+    //       address: loc.address,
+    //       description: loc.description,
+    //     }),
+    //   );
+    // });
   }
 
   onFileSelected(event: Event, type: 'cover' | number): void {

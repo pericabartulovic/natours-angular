@@ -123,6 +123,7 @@
     </fieldset>
     <!-- LOCATIONS -->
     <fieldset formArrayName="locations">
+      <h1>DODAJ DAN U FORMU!</h1>
       <legend>Locations</legend>
       @for(loc of locations.controls; let i = $index; track i) {
       <div [formGroupName]="i" class="form__location-group br-bottom">

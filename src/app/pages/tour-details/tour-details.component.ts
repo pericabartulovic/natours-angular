@@ -1,5 +1,5 @@
-import { Component, input, OnInit } from '@angular/core';
-import { catchError, Observable, of, tap } from 'rxjs';
+import { Component, DestroyRef, input, OnInit } from '@angular/core';
+import { Observable } from 'rxjs';
 import { AsyncPipe, DatePipe } from '@angular/common';
 import { Title } from '@angular/platform-browser';
 import { Tour } from '../../models/tour.model';
@@ -25,7 +25,7 @@ import { MapBoxComponent } from '../../components/map-box/map-box.component';
 })
 export class TourDetailsComponent implements OnInit {
   tourId = input.required<string>();
-  $tour?: Observable<Tour | undefined>;
+  tour$!: Observable<Tour | null>;
   errorMsg = '';
   loading = false;
   descriptionParagraphs: String[] = [];
@@ -33,25 +33,26 @@ export class TourDetailsComponent implements OnInit {
   constructor(
     private tourService: TourService,
     private title: Title,
-  ) {}
+    private destroyRef: DestroyRef,
+  ) {
+    this.tour$ = this.tourService.tour$;
+  }
 
   ngOnInit(): void {
     this.loading = true;
-    this.$tour = this.tourService.getTourById(this.tourId()).pipe(
-      tap((tour) => {
-        this.loading = false; // clear loading on success
-        // Set document title dynamically
+    this.tourService.getTourById(this.tourId());
+    const subscription = this.tourService.tour$.subscribe({
+      next: (tour) => {
         if (tour?.name) {
           this.title.setTitle(`Natours | ${tour.name}`);
         } else {
           this.title.setTitle('Natours | Tour Details');
         }
-      }),
-      catchError((err) => {
-        this.errorMsg = err.error.message || 'Failed to load tour details.';
         this.loading = false;
-        return of(undefined);
-      }),
-    );
+      },
+    });
+    this.destroyRef.onDestroy(() => {
+      subscription.unsubscribe();
+    });
   }
 }

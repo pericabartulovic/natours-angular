@@ -1,12 +1,5 @@
 import { Inject, Injectable } from '@angular/core';
-import {
-  BehaviorSubject,
-  map,
-  Observable,
-  switchMap,
-  tap,
-  throwError,
-} from 'rxjs';
+import { BehaviorSubject, map, Observable, switchMap, tap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { User } from '../models/user.model';
 import { API_URL } from '../api-url.token';

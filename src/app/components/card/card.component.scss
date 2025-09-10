@@ -96,6 +96,10 @@
     height: 2rem;
     width: 2rem;
     fill: #8001c6;
+
+    &-edit {
+      fill: ghostwhite;
+    }
   }
 
   &__footer {
@@ -120,5 +124,17 @@
 
   &__ratings {
     grid-row: 2 / 3;
+  }
+
+  &__btn-edit {
+    position: absolute;
+    z-index: 2;
+    background-color: transparent;
+    right: 0.3rem;
+    top: 0.3rem;
+    padding: .5rem;
+    border-radius: 0.4rem;
+    border: none;
+    cursor: pointer;
   }
 }
