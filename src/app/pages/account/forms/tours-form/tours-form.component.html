@@ -70,7 +70,7 @@
         <label for="imageCover">cover</label>
       </div>
       <input type="hidden" formControlName="imageCover" appControlError />
-      @for(img of [1,2,3]; track img) {
+      @for(img of [0,1,2]; track img) {
       <div class="form__group form__photo-upload ma-bt-none" formArrayName="images">
         <img class="form__tour-photo" [src]="imagePreviews[img] || 'http://localhost:3000/img/tours/placeholder.png'"
           alt="Tour image preview" />
@@ -83,7 +83,7 @@
           ✖️
         </button>
         }
-        <label [for]="'image' + img">image {{ img }}</label>
+        <label [for]="'image' + img">image {{ img + 1 }}</label>
       </div>
       }
     </fieldset>
@@ -123,26 +123,25 @@
     </fieldset>
     <!-- LOCATIONS -->
     <fieldset formArrayName="locations">
-      <h1>DODAJ DAN U FORMU!</h1>
       <legend>Locations</legend>
       @for(loc of locations.controls; let i = $index; track i) {
       <div [formGroupName]="i" class="form__location-group br-bottom">
         <span>Location {{i + 1}}</span>
-        <div class="form__group coordinates" formGroupName="coordinates">
-          <div class="form__group">
+        <div class="form__group coordinates flex--grow" formGroupName="coordinates">
+          <div class="form__group flex--grow">
             <label class="form__label">Longitude</label>
             <input class="form__input" type="number" step="any" formControlName="lng" />
           </div>
-          <div class="form__group">
+          <div class="form__group flex--grow">
             <label class="form__label">Latitude</label>
             <input class="form__input" type="number" step="any" formControlName="lat" />
           </div>
         </div>
-        <div class="form__group flex--grow">
-          <label class="form__label">Address</label>
-          <input class="form__input" type="text" formControlName="address" />
+        <div class="form__group">
+          <label class="form__label">Day</label>
+          <input class="form__input" type="number" formControlName="day" />
         </div>
-        <div class="form__group wd-100">
+        <div class="form__group flex--grow">
           <label class="form__label">Description</label>
           <input class="form__input" type="text" formControlName="description" />
         </div>
@@ -189,7 +188,7 @@
     </fieldset>
     <div class="form__group right">
       <button class="btn btn--small btn--green" type="submit" [disabled]="form.invalid">
-        Save
+        {{ isEditMode ? 'Update' : 'Save' }}
       </button>
     </div>
   </form>

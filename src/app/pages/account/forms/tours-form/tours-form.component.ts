@@ -1,4 +1,4 @@
-import { Component, DestroyRef, OnDestroy, OnInit } from '@angular/core';
+import { Component, DestroyRef, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 import { AsyncPipe } from '@angular/common';
@@ -38,7 +38,6 @@ export class ToursFormComponent implements OnInit {
   form!: FormGroup;
   startLocation!: FormGroup;
   coverFile?: File;
-  imageFiles: File[] = [];
   coverPreview: string | ArrayBuffer | null = null;
   imagePreviews: { [key: number]: string | ArrayBuffer | null } = {};
   guideSelectControl!: FormControl;
@@ -83,7 +82,6 @@ export class ToursFormComponent implements OnInit {
       summary: ['', { validators: [Validators.required] }],
       description: [''],
       imageCover: [null, Validators.required],
-      images: this.fb.array([], Validators.minLength(1)),
       startLocation: this.fb.group({
         startCoordinates: this.fb.group({
           lng: [''],
@@ -92,12 +90,21 @@ export class ToursFormComponent implements OnInit {
         startAddress: [''],
         startDescription: [''],
       }),
-      startDates: this.fb.array([this.createStartDatesGroup()]),
+      startDates: this.fb.array([]),
       locations: this.fb.array([]),
       secret: [false],
       guides: this.fb.array([]),
     });
+    this.form.setControl(
+      'images',
+      this.fb.array([
+        this.fb.control<File | string | null>(null),
+        this.fb.control<File | string | null>(null),
+        this.fb.control<File | string | null>(null),
+      ]),
+    );
     this.guideSelectControl = this.fb.control<any>(null);
+
     this.userService.getGuides();
 
     if (this.tourId) {
@@ -118,18 +125,70 @@ export class ToursFormComponent implements OnInit {
               summary: tour.summary,
               description: tour.description,
             });
+
+            // Cover image
+            this.form.patchValue({
+              imageCover: tour.imageCover,
+            });
+            this.coverPreview = `http://localhost:3000/img/tours/${tour.imageCover}`;
+
+            // images
+            // Rebuild images array to always have exactly 3 slots
+            const imagesArray = this.fb.array([
+              this.fb.control<File | string | null>(null),
+              this.fb.control<File | string | null>(null),
+              this.fb.control<File | string | null>(null),
+            ]);
+
+            tour.images.forEach((img, i) => {
+              this.imagePreviews[i] = `http://localhost:3000/img/tours/${img}`;
+              imagesArray.at(i).setValue(img); // store filename
+            });
+
+            console.log(
+              'Form images before submit:',
+              this.form.get('images')?.value,
+            );
+
+            this.form.setControl('images', imagesArray);
+
+            this.form.patchValue({
+              startLocation: {
+                startCoordinates: {
+                  lng: tour.startLocation.coordinates[0],
+                  lat: tour.startLocation.coordinates[1],
+                },
+                startAddress: tour.startLocation.address,
+                startDescription: tour.startLocation.description,
+              },
+            });
+
             this.locations.clear();
-            tour.locations.forEach((loc, i) => {
+            tour.locations.forEach((loc) => {
               this.locations.push(
                 this.fb.group({
                   coordinates: this.fb.group({
                     lng: loc.coordinates[0],
                     lat: loc.coordinates[1],
                   }),
-                  address: loc.address,
                   description: loc.description,
+                  day: loc.day,
                 }),
               );
+            });
+
+            this.startDates.clear();
+            tour.startDates.forEach((sd) => {
+              const formatted = new Date(sd).toISOString().split('T')[0];
+              this.startDates.push(
+                this.fb.group({
+                  date: formatted,
+                }),
+              );
+            });
+
+            tour.guides.forEach((g) => {
+              this.guidesArray.push(this.createGuideGroup(g));
             });
           }
         },
@@ -139,32 +198,11 @@ export class ToursFormComponent implements OnInit {
       });
     } else {
       this.locations.push(this.createLocationGroup());
+      this.createStartDatesGroup();
     }
-
-    // this.form.patchValue({
-    //   name: tour.name,
-    //   startLocation: {
-    //     long: tour.startLocation.coordinates[0],
-    //     lat: tour.startLocation.coordinates[1],
-    //     address: tour.startLocation.address,
-    //     description: tour.startLocation.description,
-    //   },
-    // });
-
-    // // Patch locations array
-    // this.locations.clear();
-    // tour.locations.forEach((loc) => {
-    //   this.locations.push(
-    //     this.fb.group({
-    //       long: loc.coordinates[0],
-    //       lat: loc.coordinates[1],
-    //       address: loc.address,
-    //       description: loc.description,
-    //     }),
-    //   );
-    // });
   }
 
+  // Images upload
   onFileSelected(event: Event, type: 'cover' | number): void {
     const input = event.target as HTMLInputElement;
     if (!input.files?.length) return;
@@ -176,13 +214,20 @@ export class ToursFormComponent implements OnInit {
       if (type === 'cover') {
         this.coverPreview = reader.result;
         this.coverFile = file;
-        this.form.get('imageCover')?.setValue(file.name); // just for display / hidden control
+        this.form.get('imageCover')?.setValue(file);
       } else {
-        this.imagePreviews[type] = reader.result;
-        this.imageFiles[type] = file;
-        // this.form.get('image')?.setValue(file.name); // optional, for hidden control
+        const idx = Number(type);
+        this.imagePreviews[idx] = reader.result;
+
+        const imagesArray = this.form.get('images') as FormArray;
+        // ensure slot exists
+        while (imagesArray.length <= idx) {
+          imagesArray.push(this.fb.control<File | string | null>(null));
+        }
+        imagesArray.at(idx).setValue(file);
       }
     };
+
     reader.readAsDataURL(file);
   }
 
@@ -192,9 +237,12 @@ export class ToursFormComponent implements OnInit {
       this.coverFile = undefined;
       this.form.get('imageCover')?.reset();
     } else {
-      this.imagePreviews[type] = null;
-      this.imageFiles.splice(type, 1);
-      // this.form.get('image')?.reset(); // optional, if a hidden control
+      const idx = Number(type);
+      this.imagePreviews[idx] = null;
+      const imagesArray = this.form.get('images') as FormArray;
+      if (imagesArray.at(idx)) {
+        imagesArray.at(idx).setValue(''); // Important: set empty string for deletion (PATCH semantics)
+      }
     }
   }
 
@@ -228,8 +276,8 @@ export class ToursFormComponent implements OnInit {
         lng: [''],
         lat: [''],
       }),
-      address: [''],
       description: [''],
+      day: [''],
     });
   }
 
@@ -241,7 +289,7 @@ export class ToursFormComponent implements OnInit {
     this.locations.removeAt(index);
   }
 
-  //  Getter and Factory for Guides:
+  // Getter and Factory for Guides:
   get guidesArray(): FormArray {
     return this.form.get('guides') as FormArray;
   }
@@ -274,36 +322,62 @@ export class ToursFormComponent implements OnInit {
     this.guidesArray.removeAt(index);
   }
 
+  get isEditMode(): boolean {
+    return !!this.tourId; // true if tourId is not null/empty
+  }
+
   // SUBMIT AND PAYLOAD
   onSubmit() {
     if (this.form.invalid) return;
 
     const payload = this.buildPayload();
+    if (this.isEditMode) {
+      this.tourService.updateTourBy(payload, this.tourId).subscribe({
+        next: () => {
+          this.notificationService.notify({
+            message: 'Tour successfully updated!',
+            type: 'success',
+          });
+        },
+        error: (err: { error: { message: string } }) => {
+          const backendMessage =
+            err?.error?.message ||
+            'Something went wrong during updating the tour, please try again.';
+          this.notificationService.notify({
+            message: backendMessage,
+            type: 'error',
+            duration: 8000,
+          });
+        },
+      });
+    } else {
+      this.tourService.createTour(payload).subscribe({
+        next: () => {
+          this.notificationService.notify({
+            message: 'New tour created',
+            type: 'success',
+          });
+          this.resetForm();
+        },
+        error: (err: { error: { message: string } }) => {
+          const backendMessage =
+            err?.error?.message ||
+            'Something went wrong during creating the tour, please try again.';
+          this.notificationService.notify({
+            message: backendMessage,
+            type: 'error',
+            duration: 8000,
+          });
+        },
+      });
+    }
+  }
 
-    this.tourService.createTour(payload).subscribe({
-      next: () => {
-        this.notificationService.notify({
-          message: 'New tour created',
-          type: 'success',
-        });
-
-        this.form.reset();
-        this.coverPreview = null;
-        this.imagePreviews = {};
-        this.imageFiles = [];
-        this.guidesArray.clear();
-      },
-      error: (err: { error: { message: string } }) => {
-        const backendMessage =
-          err?.error?.message ||
-          'Something went wrong during creating the tour, please try again.';
-        this.notificationService.notify({
-          message: backendMessage,
-          type: 'error',
-          duration: 8000,
-        });
-      },
-    });
+  private resetForm() {
+    this.form.reset();
+    this.coverPreview = null;
+    this.imagePreviews = {};
+    this.guidesArray.clear();
   }
 
   private buildPayload(): FormData {
@@ -327,9 +401,35 @@ export class ToursFormComponent implements OnInit {
     formData.append('price', fv.prices.price);
     formData.append('priceDiscount', fv.prices.priceDiscount);
 
+    // Cover image
+    if (this.coverFile) {
+      formData.append('imageCover', this.coverFile);
+    } else if (fv.imageCover) {
+      formData.append('imageCover', fv.imageCover);
+    }
+
     // Images
-    if (this.coverFile) formData.append('imageCover', this.coverFile);
-    this.imageFiles.forEach((file) => formData.append('images', file));
+    const fileIndexes: number[] = [];
+
+    fv.images.forEach((img: File | string | null, i: number) => {
+      if (img instanceof File) {
+        fileIndexes.push(i);
+      }
+    });
+
+    // Append the index metadata as JSON string
+    formData.append('imagesIndexes', JSON.stringify(fileIndexes));
+
+    // Append images normally, order doesn't matter as long as backend uses indexes
+    fv.images.forEach((img: File | string | null, i: number) => {
+      if (img instanceof File) {
+        formData.append('images', img);
+      } else if (typeof img === 'string' && img.length > 0) {
+        formData.append('images', img);
+      } else {
+        formData.append('images', ''); // empty slot
+      }
+    });
 
     // Dates
     const formattedDates = this.formatDates(fv.startDates);
@@ -345,9 +445,8 @@ export class ToursFormComponent implements OnInit {
       formData.append(`locations[${i}][type]`, 'Point');
       formData.append(`locations[${i}][coordinates][]`, loc.coordinates.lng);
       formData.append(`locations[${i}][coordinates][]`, loc.coordinates.lat);
-      formData.append(`locations[${i}][address]`, loc.address || '');
       formData.append(`locations[${i}][description]`, loc.description || '');
-      formData.append(`locations[${i}][day]`, (i + 1).toString());
+      formData.append(`locations[${i}][day]`, loc.day);
     });
 
     // Start location

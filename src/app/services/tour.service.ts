@@ -69,4 +69,10 @@ export class TourService {
       withCredentials: true,
     });
   }
+
+  updateTourBy(formData: FormData, tourId: string | null) {
+    return this.http.patch(`${this.apiUrl}/tours/${tourId}`, formData, {
+      withCredentials: true,
+    });
+  }
 }
