@@ -40,6 +40,7 @@ export class ToursFormComponent implements OnInit {
   coverFile?: File;
   coverPreview: string | ArrayBuffer | null = null;
   imagePreviews: { [key: number]: string | ArrayBuffer | null } = {};
+  private static readonly IMAGE_SLOT_COUNT = 3;
   guideSelectControl!: FormControl;
 
   constructor(
@@ -82,6 +83,7 @@ export class ToursFormComponent implements OnInit {
       summary: ['', { validators: [Validators.required] }],
       description: [''],
       imageCover: [null, Validators.required],
+      images: this.initImageSlots(),
       startLocation: this.fb.group({
         startCoordinates: this.fb.group({
           lng: [''],
@@ -95,17 +97,14 @@ export class ToursFormComponent implements OnInit {
       secret: [false],
       guides: this.fb.array([]),
     });
-    this.form.setControl(
-      'images',
-      this.fb.array([
-        this.fb.control<File | string | null>(null),
-        this.fb.control<File | string | null>(null),
-        this.fb.control<File | string | null>(null),
-      ]),
-    );
     this.guideSelectControl = this.fb.control<any>(null);
 
     this.userService.getGuides();
+
+    if (!this.isEditMode) {
+      this.locations.push(this.createLocationGroup());
+      this.startDates.push(this.createStartDatesGroup());
+    }
 
     if (this.tourId) {
       this.tourService.getTourById(this.tourId);
@@ -134,24 +133,9 @@ export class ToursFormComponent implements OnInit {
 
             // images
             // Rebuild images array to always have exactly 3 slots
-            const imagesArray = this.fb.array([
-              this.fb.control<File | string | null>(null),
-              this.fb.control<File | string | null>(null),
-              this.fb.control<File | string | null>(null),
-            ]);
+            this.populateImages(tour);
 
-            tour.images.forEach((img, i) => {
-              this.imagePreviews[i] = `http://localhost:3000/img/tours/${img}`;
-              imagesArray.at(i).setValue(img); // store filename
-            });
-
-            console.log(
-              'Form images before submit:',
-              this.form.get('images')?.value,
-            );
-
-            this.form.setControl('images', imagesArray);
-
+            // Start location
             this.form.patchValue({
               startLocation: {
                 startCoordinates: {
@@ -196,10 +180,16 @@ export class ToursFormComponent implements OnInit {
       this.destroyRef.onDestroy(() => {
         subscription.unsubscribe();
       });
-    } else {
-      this.locations.push(this.createLocationGroup());
-      this.createStartDatesGroup();
     }
+  }
+
+  // initialize fixed number of slots
+  private initImageSlots(): FormArray {
+    const slots = Array(ToursFormComponent.IMAGE_SLOT_COUNT)
+      .fill(null)
+      .map(() => this.fb.control<File | string | null>(null));
+
+    return this.fb.array(slots);
   }
 
   // Images upload
@@ -217,10 +207,12 @@ export class ToursFormComponent implements OnInit {
         this.form.get('imageCover')?.setValue(file);
       } else {
         const idx = Number(type);
+        if (idx < 0 || idx >= ToursFormComponent.IMAGE_SLOT_COUNT) return;
+
         this.imagePreviews[idx] = reader.result;
 
         const imagesArray = this.form.get('images') as FormArray;
-        // ensure slot exists
+        // ensuring that slot exists, so called defensive approach
         while (imagesArray.length <= idx) {
           imagesArray.push(this.fb.control<File | string | null>(null));
         }
@@ -231,6 +223,23 @@ export class ToursFormComponent implements OnInit {
     reader.readAsDataURL(file);
   }
 
+  private populateImages(tour: Tour): void {
+    const imagesArray = this.form.get('images') as FormArray;
+    this.imagePreviews = {};
+
+    // ensure correct length
+    while (imagesArray.length < ToursFormComponent.IMAGE_SLOT_COUNT) {
+      imagesArray.push(this.fb.control<File | string | null>(null));
+    }
+
+    tour.images.forEach((img, i) => {
+      if (i < ToursFormComponent.IMAGE_SLOT_COUNT) {
+        this.imagePreviews[i] = `http://localhost:3000/img/tours/${img}`;
+        imagesArray.at(i).setValue(img);
+      }
+    });
+  }
+
   removeImage(type: 'cover' | number): void {
     if (type === 'cover') {
       this.coverPreview = null;
@@ -238,10 +247,12 @@ export class ToursFormComponent implements OnInit {
       this.form.get('imageCover')?.reset();
     } else {
       const idx = Number(type);
+      if (idx < 0 || idx >= ToursFormComponent.IMAGE_SLOT_COUNT) return;
+
       this.imagePreviews[idx] = null;
       const imagesArray = this.form.get('images') as FormArray;
       if (imagesArray.at(idx)) {
-        imagesArray.at(idx).setValue(''); // Important: set empty string for deletion (PATCH semantics)
+        imagesArray.at(idx).setValue('');
       }
     }
   }

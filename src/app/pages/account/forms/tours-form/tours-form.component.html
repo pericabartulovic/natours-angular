@@ -70,6 +70,7 @@
         <label for="imageCover">cover</label>
       </div>
       <input type="hidden" formControlName="imageCover" appControlError />
+
       @for(img of [0,1,2]; track img) {
       <div class="form__group form__photo-upload ma-bt-none" formArrayName="images">
         <img class="form__tour-photo" [src]="imagePreviews[img] || 'http://localhost:3000/img/tours/placeholder.png'"
