@@ -1,5 +1,4 @@
 import { Component, DestroyRef, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 import { AsyncPipe } from '@angular/common';
 import { Observable, skip } from 'rxjs';
@@ -16,13 +15,14 @@ import { TourService } from '../../../../services/tour.service';
 import { Tour } from '../../../../models/tour.model';
 import { UserService } from '../../../../services/user.service';
 import { User } from '../../../../models/user.model';
-import { valueGreaterThan } from '../../../../shared/validators/values.validator';
 import { ControlErrorDirective } from '../../../../shared/control-error/control-error.directive';
 import {
   FORM_ERROR_MESSAGES,
   defaultErrorMessages,
 } from '../../../../shared/control-error/form-errors';
 import { NotificationService } from '../../../../services/notification.service';
+import { TourFormBuilder } from './helpers/tour-from-builder';
+import { TourFormPopulate } from './helpers/tour-form-populate';
 
 @Component({
   selector: 'app-tours-form',
@@ -32,15 +32,15 @@ import { NotificationService } from '../../../../services/notification.service';
   styleUrls: ['./tours-form.component.scss'],
 })
 export class ToursFormComponent implements OnInit {
+  private static readonly IMAGE_SLOT_COUNT = 3;
+  form!: FormGroup;
   user$!: Observable<User | null>;
   guides$!: Observable<User[] | null>;
   tourId: string | null = '';
-  form!: FormGroup;
   startLocation!: FormGroup;
   coverFile?: File;
   coverPreview: string | ArrayBuffer | null = null;
   imagePreviews: { [key: number]: string | ArrayBuffer | null } = {};
-  private static readonly IMAGE_SLOT_COUNT = 3;
   guideSelectControl!: FormControl;
 
   constructor(
@@ -51,6 +51,8 @@ export class ToursFormComponent implements OnInit {
     private fb: FormBuilder,
     private activatedRoute: ActivatedRoute,
     private destroyRef: DestroyRef,
+    private formHelper: TourFormBuilder,
+    private formPopulate: TourFormPopulate,
   ) {
     this.user$ = this.authService.user$;
     this.guides$ = this.userService.guides$;
@@ -58,48 +60,9 @@ export class ToursFormComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.form = this.fb.group({
-      name: [
-        '',
-        {
-          validators: [
-            Validators.required,
-            Validators.minLength(10),
-            Validators.maxLength(40),
-          ],
-          updateOn: 'change',
-        },
-      ],
-      duration: ['', { validators: [Validators.required] }],
-      maxGroupSize: ['', { validators: [Validators.required] }],
-      difficulty: ['', { validators: [Validators.required] }],
-      prices: this.fb.group(
-        {
-          price: ['', { validators: [Validators.required] }],
-          priceDiscount: ['0'],
-        },
-        { validators: valueGreaterThan('price', 'priceDiscount') },
-      ),
-      summary: ['', { validators: [Validators.required] }],
-      description: [''],
-      imageCover: [null, Validators.required],
-      images: this.initImageSlots(),
-      startLocation: this.fb.group({
-        startCoordinates: this.fb.group({
-          lng: [''],
-          lat: [''],
-        }),
-        startAddress: [''],
-        startDescription: [''],
-      }),
-      startDates: this.fb.array([]),
-      locations: this.fb.array([]),
-      secret: [false],
-      guides: this.fb.array([]),
-    });
-    this.guideSelectControl = this.fb.control<any>(null);
-
     this.userService.getGuides();
+    this.form = this.formHelper.buildForm();
+    this.guideSelectControl = this.fb.control<any>(null);
 
     if (!this.isEditMode) {
       this.locations.push(this.createLocationGroup());
@@ -111,69 +74,16 @@ export class ToursFormComponent implements OnInit {
       const subscription = this.tourService.tour$.pipe(skip(1)).subscribe({
         next: (tour) => {
           if (tour) {
-            this.form.patchValue({
-              name: tour.name,
-              duration: tour.duration,
-              difficulty: tour.difficulty,
-              maxGroupSize: tour.maxGroupSize,
-              prices: {
-                price: tour.price,
-                priceDiscount: tour.priceDiscount,
-              },
-              secret: tour.secretTour,
-              summary: tour.summary,
-              description: tour.description,
-            });
-
-            // Cover image
-            this.form.patchValue({
-              imageCover: tour.imageCover,
-            });
+            this.formPopulate.populateGeneralInputs(this.form, tour);
             this.coverPreview = `http://localhost:3000/img/tours/${tour.imageCover}`;
-
-            // images
-            // Rebuild images array to always have exactly 3 slots
-            this.populateImages(tour);
-
-            // Start location
-            this.form.patchValue({
-              startLocation: {
-                startCoordinates: {
-                  lng: tour.startLocation.coordinates[0],
-                  lat: tour.startLocation.coordinates[1],
-                },
-                startAddress: tour.startLocation.address,
-                startDescription: tour.startLocation.description,
-              },
-            });
-
-            this.locations.clear();
-            tour.locations.forEach((loc) => {
-              this.locations.push(
-                this.fb.group({
-                  coordinates: this.fb.group({
-                    lng: loc.coordinates[0],
-                    lat: loc.coordinates[1],
-                  }),
-                  description: loc.description,
-                  day: loc.day,
-                }),
-              );
-            });
-
-            this.startDates.clear();
-            tour.startDates.forEach((sd) => {
-              const formatted = new Date(sd).toISOString().split('T')[0];
-              this.startDates.push(
-                this.fb.group({
-                  date: formatted,
-                }),
-              );
-            });
-
-            tour.guides.forEach((g) => {
-              this.guidesArray.push(this.createGuideGroup(g));
-            });
+            this.formPopulate.populateImages(
+              this.form,
+              tour,
+              this.imagePreviews,
+            );
+            this.formPopulate.populateLocations(tour, this.locations);
+            this.formPopulate.populateDates(tour, this.startDates);
+            this.formPopulate.populateGuides(this.form, tour);
           }
         },
       });
@@ -181,15 +91,6 @@ export class ToursFormComponent implements OnInit {
         subscription.unsubscribe();
       });
     }
-  }
-
-  // initialize fixed number of slots
-  private initImageSlots(): FormArray {
-    const slots = Array(ToursFormComponent.IMAGE_SLOT_COUNT)
-      .fill(null)
-      .map(() => this.fb.control<File | string | null>(null));
-
-    return this.fb.array(slots);
   }
 
   // Images upload
@@ -221,23 +122,6 @@ export class ToursFormComponent implements OnInit {
     };
 
     reader.readAsDataURL(file);
-  }
-
-  private populateImages(tour: Tour): void {
-    const imagesArray = this.form.get('images') as FormArray;
-    this.imagePreviews = {};
-
-    // ensure correct length
-    while (imagesArray.length < ToursFormComponent.IMAGE_SLOT_COUNT) {
-      imagesArray.push(this.fb.control<File | string | null>(null));
-    }
-
-    tour.images.forEach((img, i) => {
-      if (i < ToursFormComponent.IMAGE_SLOT_COUNT) {
-        this.imagePreviews[i] = `http://localhost:3000/img/tours/${img}`;
-        imagesArray.at(i).setValue(img);
-      }
-    });
   }
 
   removeImage(type: 'cover' | number): void {
