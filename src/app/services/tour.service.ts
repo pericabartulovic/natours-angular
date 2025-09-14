@@ -1,7 +1,6 @@
 import { Inject, Injectable, OnInit } from '@angular/core';
 import { BehaviorSubject, Observable, switchMap, tap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { User } from '../models/user.model';
 import { API_URL } from '../api-url.token';
 import { Tour } from '../models/tour.model';
 import { catchError, map, throwError } from 'rxjs';
@@ -60,19 +59,59 @@ export class TourService {
             type: 'error',
           });
           setTimeout(() => this.router.navigate(['/tours']), 3000);
+          return throwError(() => err);
         },
       });
   }
 
-  createTour(formData: FormData) {
-    return this.http.post(`${this.apiUrl}/tours`, formData, {
-      withCredentials: true,
-    });
+  createTour(formData: FormData): Observable<any> {
+    return this.http
+      .post(`${this.apiUrl}/tours`, formData, {
+        withCredentials: true,
+      })
+      .pipe(
+        tap(() => {
+          this.notificationService.notify({
+            message: 'New tour created',
+            type: 'success',
+          });
+        }),
+        catchError((err) => {
+          const backendMessage =
+            err?.error?.message ||
+            'Something went wrong during creating the tour, please try again.';
+          this.notificationService.notify({
+            message: backendMessage,
+            type: 'error',
+            duration: 8000,
+          });
+          return throwError(() => err);
+        }),
+      );
   }
 
-  updateTourBy(formData: FormData, tourId: string | null) {
-    return this.http.patch(`${this.apiUrl}/tours/${tourId}`, formData, {
-      withCredentials: true,
-    });
+  updateTourById(formData: FormData, tourId: string | null) {
+    this.http
+      .patch(`${this.apiUrl}/tours/${tourId}`, formData, {
+        withCredentials: true,
+      })
+      .subscribe({
+        next: () => {
+          this.notificationService.notify({
+            message: 'Tour successfully updated!',
+            type: 'success',
+          });
+        },
+        error: (err: { error: { message: string } }) => {
+          const backendMessage =
+            err?.error?.message ||
+            'Something went wrong during updating the tour, please try again.';
+          this.notificationService.notify({
+            message: backendMessage,
+            type: 'error',
+            duration: 8000,
+          });
+        },
+      });
   }
 }

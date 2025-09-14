@@ -75,12 +75,16 @@ export class ToursFormComponent implements OnInit {
         next: (tour) => {
           if (tour) {
             this.formPopulate.populateGeneralInputs(this.form, tour);
-            this.coverPreview = `http://localhost:3000/img/tours/${tour.imageCover}`;
-            this.formPopulate.populateImages(
-              this.form,
-              tour,
-              this.imagePreviews,
-            );
+
+            const { imagePreviews, coverPreview } =
+              this.formPopulate.populateImages(
+                this.form,
+                tour,
+                this.imagePreviews,
+              );
+            this.imagePreviews = imagePreviews;
+            this.coverPreview = coverPreview;
+
             this.formPopulate.populateLocations(tour, this.locations);
             this.formPopulate.populateDates(tour, this.startDates);
             this.formPopulate.populateGuides(this.form, tour);
@@ -93,7 +97,7 @@ export class ToursFormComponent implements OnInit {
     }
   }
 
-  // Images upload
+  // -------------------- IMAGES --------------------
   onFileSelected(event: Event, type: 'cover' | number): void {
     const input = event.target as HTMLInputElement;
     if (!input.files?.length) return;
@@ -141,6 +145,7 @@ export class ToursFormComponent implements OnInit {
     }
   }
 
+  // -------------------- DATES --------------------
   // Getter and Factory for creating a dates group
   get startDates(): FormArray {
     return this.form.get('startDates') as FormArray;
@@ -160,6 +165,7 @@ export class ToursFormComponent implements OnInit {
     this.startDates.removeAt(index);
   }
 
+  // -------------------- LOCATIONS --------------------
   // Getter and Factory for creating a location group
   get locations(): FormArray {
     return this.form.get('locations') as FormArray;
@@ -184,6 +190,7 @@ export class ToursFormComponent implements OnInit {
     this.locations.removeAt(index);
   }
 
+  // -------------------- GUIDES --------------------
   // Getter and Factory for Guides:
   get guidesArray(): FormArray {
     return this.form.get('guides') as FormArray;
@@ -216,6 +223,7 @@ export class ToursFormComponent implements OnInit {
   removeGuide(index: number) {
     this.guidesArray.removeAt(index);
   }
+  // ----------------------------------------------------------
 
   get isEditMode(): boolean {
     return !!this.tourId; // true if tourId is not null/empty
@@ -227,42 +235,11 @@ export class ToursFormComponent implements OnInit {
 
     const payload = this.buildPayload();
     if (this.isEditMode) {
-      this.tourService.updateTourBy(payload, this.tourId).subscribe({
-        next: () => {
-          this.notificationService.notify({
-            message: 'Tour successfully updated!',
-            type: 'success',
-          });
-        },
-        error: (err: { error: { message: string } }) => {
-          const backendMessage =
-            err?.error?.message ||
-            'Something went wrong during updating the tour, please try again.';
-          this.notificationService.notify({
-            message: backendMessage,
-            type: 'error',
-            duration: 8000,
-          });
-        },
-      });
+      this.tourService.updateTourById(payload, this.tourId);
     } else {
       this.tourService.createTour(payload).subscribe({
         next: () => {
-          this.notificationService.notify({
-            message: 'New tour created',
-            type: 'success',
-          });
           this.resetForm();
-        },
-        error: (err: { error: { message: string } }) => {
-          const backendMessage =
-            err?.error?.message ||
-            'Something went wrong during creating the tour, please try again.';
-          this.notificationService.notify({
-            message: backendMessage,
-            type: 'error',
-            duration: 8000,
-          });
         },
       });
     }

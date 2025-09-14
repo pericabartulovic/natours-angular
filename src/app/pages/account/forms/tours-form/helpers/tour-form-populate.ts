@@ -37,7 +37,10 @@ export class TourFormPopulate {
     form: FormGroup,
     tour: Tour,
     imagePreviews: { [key: number]: string | ArrayBuffer | null },
-  ) {
+  ): { imagePreviews: typeof imagePreviews; coverPreview: string | null } {
+    const coverPreview = tour.imageCover
+      ? `http://localhost:3000/img/tours/${tour.imageCover}`
+      : null;
     const imagesArray = form.get('images') as FormArray;
     // NOTE: in TypeScript/JavaScript, function arguments are passed by value (for primitives)
     // or by reference (for objects) — reassigning the parameter to '{}'
@@ -55,7 +58,7 @@ export class TourFormPopulate {
         imagesArray.at(i).setValue(img);
       }
     });
-    return imagePreviews;
+    return { imagePreviews, coverPreview };
   }
 
   populateLocations(tour: Tour, locations: FormArray) {
