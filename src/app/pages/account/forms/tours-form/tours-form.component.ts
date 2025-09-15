@@ -12,7 +12,6 @@ import {
 } from '@angular/forms';
 import { AuthService } from '../../../../services/auth.service';
 import { TourService } from '../../../../services/tour.service';
-import { Tour } from '../../../../models/tour.model';
 import { UserService } from '../../../../services/user.service';
 import { User } from '../../../../models/user.model';
 import { ControlErrorDirective } from '../../../../shared/control-error/control-error.directive';
@@ -23,6 +22,7 @@ import {
 import { NotificationService } from '../../../../services/notification.service';
 import { TourFormBuilder } from './helpers/tour-from-builder';
 import { TourFormPopulate } from './helpers/tour-form-populate';
+import { TourFormBuildPayload } from './helpers/tour-form-build-payload';
 
 @Component({
   selector: 'app-tours-form',
@@ -47,12 +47,12 @@ export class ToursFormComponent implements OnInit {
     public authService: AuthService,
     public tourService: TourService,
     public userService: UserService,
-    private notificationService: NotificationService,
     private fb: FormBuilder,
     private activatedRoute: ActivatedRoute,
     private destroyRef: DestroyRef,
     private formHelper: TourFormBuilder,
     private formPopulate: TourFormPopulate,
+    private buildPayloadHelper: TourFormBuildPayload,
   ) {
     this.user$ = this.authService.user$;
     this.guides$ = this.userService.guides$;
@@ -198,7 +198,7 @@ export class ToursFormComponent implements OnInit {
 
   private createGuideGroup(guide: any): FormGroup {
     return this.fb.group({
-      id: [guide._id, Validators.required],
+      _id: [guide._id, Validators.required],
       name: [guide.name],
       email: [guide.email],
       photo: [guide.photo],
@@ -211,7 +211,7 @@ export class ToursFormComponent implements OnInit {
     if (!guide) return;
 
     const alreadyExists = this.guidesArray.value.some(
-      (g: any) => g.id === guide._id,
+      (g: any) => g._id === guide._id,
     );
     if (!alreadyExists) {
       this.guidesArray.push(this.createGuideGroup(guide));
@@ -233,7 +233,11 @@ export class ToursFormComponent implements OnInit {
   onSubmit() {
     if (this.form.invalid) return;
 
-    const payload = this.buildPayload();
+    const payload = this.buildPayloadHelper.buildPayload(
+      this.form,
+      this.coverFile,
+      this.guidesArray,
+    );
     if (this.isEditMode) {
       this.tourService.updateTourById(payload, this.tourId);
     } else {
@@ -250,104 +254,5 @@ export class ToursFormComponent implements OnInit {
     this.coverPreview = null;
     this.imagePreviews = {};
     this.guidesArray.clear();
-  }
-
-  private buildPayload(): FormData {
-    const fv = this.form.value;
-    const formData = new FormData();
-
-    // Basic fields
-    [
-      'name',
-      'duration',
-      'difficulty',
-      'maxGroupSize',
-      'secret',
-      'summary',
-      'description',
-    ].forEach((key) => {
-      formData.append(key, fv[key]);
-    });
-
-    // Price
-    formData.append('price', fv.prices.price);
-    formData.append('priceDiscount', fv.prices.priceDiscount);
-
-    // Cover image
-    if (this.coverFile) {
-      formData.append('imageCover', this.coverFile);
-    } else if (fv.imageCover) {
-      formData.append('imageCover', fv.imageCover);
-    }
-
-    // Images
-    const fileIndexes: number[] = [];
-
-    fv.images.forEach((img: File | string | null, i: number) => {
-      if (img instanceof File) {
-        fileIndexes.push(i);
-      }
-    });
-
-    // Append the index metadata as JSON string
-    formData.append('imagesIndexes', JSON.stringify(fileIndexes));
-
-    // Append images normally, order doesn't matter as long as backend uses indexes
-    fv.images.forEach((img: File | string | null, i: number) => {
-      if (img instanceof File) {
-        formData.append('images', img);
-      } else if (typeof img === 'string' && img.length > 0) {
-        formData.append('images', img);
-      } else {
-        formData.append('images', ''); // empty slot
-      }
-    });
-
-    // Dates
-    const formattedDates = this.formatDates(fv.startDates);
-    formattedDates?.forEach((date) => formData.append('startDates', date));
-
-    // Guides
-    this.guidesArray.value.forEach((g: any) =>
-      formData.append('guides', g._id || g.id),
-    );
-
-    // Locations — send as objects, not JSON strings
-    fv.locations.forEach((loc: any, i: number) => {
-      formData.append(`locations[${i}][type]`, 'Point');
-      formData.append(`locations[${i}][coordinates][]`, loc.coordinates.lng);
-      formData.append(`locations[${i}][coordinates][]`, loc.coordinates.lat);
-      formData.append(`locations[${i}][description]`, loc.description || '');
-      formData.append(`locations[${i}][day]`, loc.day);
-    });
-
-    // Start location
-    formData.append('startLocation[type]', 'Point');
-    formData.append(
-      'startLocation[coordinates][]',
-      fv.startLocation.startCoordinates.lng,
-    );
-    formData.append(
-      'startLocation[coordinates][]',
-      fv.startLocation.startCoordinates.lat,
-    );
-    formData.append(
-      'startLocation[address]',
-      fv.startLocation.startAddress || '',
-    );
-    formData.append(
-      'startLocation[description]',
-      fv.startLocation.startDescription || '',
-    );
-
-    return formData;
-  }
-
-  private formatDates(dates: any[] = []): string[] | undefined {
-    if (!dates.length) return [];
-    return dates
-      .map((d) => d.date)
-      .filter(Boolean)
-      .map((d) => new Date(d).toISOString());
   }
 }

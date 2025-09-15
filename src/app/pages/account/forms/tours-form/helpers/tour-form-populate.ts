@@ -98,7 +98,7 @@ export class TourFormPopulate {
     tour.guides.forEach((g) => {
       guidesArray.push(
         this.fb.group({
-          id: [g._id],
+          _id: [g._id],
           name: [g.name],
           email: [g.email],
           photo: [g.photo],
