@@ -4,31 +4,31 @@
     <div class="form__group">
       <label class="form__label" for="email">Email address</label>
       <input id="email" class="form__input" type="email" placeholder="you@example.com"
-        [formControl]="form.controls.email" />
+        [formControl]="form.controls.email" appControlError />
     </div>
     <div class="form__group ma-bt-md">
       <label class="form__label" for="password">Password</label>
       <input #passwordInput id="password" class="form__input" type="password" placeholder="••••••••"
-        formControlName="password" />
+        formControlName="password" appControlError />
       <app-btn-pass-visible [input]="passwordInput" />
     </div>
     <div class="form__group form__group--actions">
-      <button class="btn btn--green" type="submit" [disabled]="emailIsInvalid || passwordIsInvalid">
+      <button class="btn btn--green" type="submit" [disabled]="emailOrPasswordIsInvalid()">
         {{ loading ? 'Logging in...' : 'Login' }}
       </button>
       <a [routerLink]="['/users/forgotPassword']" class="btn btn--white">Forgot password</a>
     </div>
 
-    @if (emailIsInvalid) {
+    <!-- @if (emailIsInvalid) {
     <p class="form__error">
       Please enter valid email address.
     </p>
-    }
+    } -->
 
-    @if (passwordIsInvalid) {
+    <!-- @if (passwordIsInvalid) {
     <p class="form__error">
       Please enter valid password (at least 8 characters long).
     </p>
-    }
+    } -->
   </form>
 </div>

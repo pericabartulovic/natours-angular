@@ -9,6 +9,6 @@ export const defaultErrorMessages = {
   minlength: 'Too short',
   maxlength: 'Too long',
   email: 'Invalid email format',
-  notGreater: 'Price must be greater than discount',
-  equalValue: 'Values must match',
+  notGreater: 'Discount must be lower than price',
+  valuesNotEqual: 'Passwords must match',
 };

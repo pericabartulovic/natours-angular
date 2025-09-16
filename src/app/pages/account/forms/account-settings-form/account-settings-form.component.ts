@@ -8,7 +8,7 @@ import {
 } from '@angular/forms';
 import { AuthService } from '../../../../services/auth.service';
 import { UserService } from '../../../../services/user.service';
-import { equalValues } from '../../../../shared/validators/values.validator';
+import { compareValues } from '../../../../shared/validators/values.validator';
 import { BtnPassVisibleComponent } from '../../../../components/shared/btn-pass-visible/btn-pass-visible.component';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../../../components/shared/confirm-dialog/confirm-dialog.component';
@@ -101,7 +101,9 @@ export class AccountSettingsFormComponent implements OnInit {
       }),
     },
     {
-      validators: [equalValues('password', 'passwordConfirm')],
+      validators: [
+        compareValues('password', 'passwordConfirm', 'passValidator'),
+      ],
     },
   );
 

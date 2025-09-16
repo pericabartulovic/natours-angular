@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, computed, OnDestroy, OnInit, signal } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -7,18 +7,30 @@ import {
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../../services/auth.service';
-import { NotificationService } from '../../../../services/notification.service';
 import { BtnPassVisibleComponent } from '../../../../components/shared/btn-pass-visible/btn-pass-visible.component';
+import { ControlErrorDirective } from '../../../../shared/control-error/control-error.directive';
+import {
+  FORM_ERROR_MESSAGES,
+  defaultErrorMessages,
+} from '../../../../shared/control-error/form-errors';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule, RouterLink, BtnPassVisibleComponent],
+  imports: [
+    ReactiveFormsModule,
+    RouterLink,
+    BtnPassVisibleComponent,
+    ControlErrorDirective,
+  ],
+  providers: [{ provide: FORM_ERROR_MESSAGES, useValue: defaultErrorMessages }],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })
-export class LoginComponent {
+export class LoginComponent implements OnDestroy {
+  private statusSub!: Subscription;
   loading = false;
-  error = '';
+  emailOrPasswordIsInvalid = signal<boolean>(true); // for practicing purposes only...
 
   form = new FormGroup({
     email: new FormControl('', {
@@ -32,27 +44,16 @@ export class LoginComponent {
   constructor(
     private authService: AuthService,
     private router: Router,
-    private notificationService: NotificationService,
-  ) {}
-
-  get emailIsInvalid() {
-    return (
-      this.form.controls.email.touched &&
-      this.form.controls.email.dirty &&
-      this.form.controls.email.invalid
-    );
-  }
-  get passwordIsInvalid() {
-    return (
-      this.form.controls.password.touched &&
-      this.form.controls.password.dirty &&
-      this.form.controls.password.invalid
-    );
+  ) {
+    this.statusSub = this.form.statusChanges.subscribe(() => {
+      this.emailOrPasswordIsInvalid.set(
+        this.form.controls.email.invalid || this.form.controls.password.invalid,
+      );
+    });
   }
 
   onSubmit() {
     this.loading = true;
-    this.error = '';
 
     this.authService.logIn(
       this.form.controls.email.value!,
@@ -70,5 +71,9 @@ export class LoginComponent {
 
   togglePasswordVisibility(input: HTMLInputElement) {
     input.type = input.type === 'password' ? 'text' : 'password';
+  }
+
+  ngOnDestroy() {
+    this.statusSub.unsubscribe();
   }
 }

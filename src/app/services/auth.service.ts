@@ -101,17 +101,19 @@ export class AuthService {
   }
 
   logout() {
-    this.http.get(`${this.apiUrl}/users/logout`).subscribe({
-      next: () => {
-        this.isLoggedInSubject.next(false);
-        this.userSubject.next(null);
-      },
-      error: (err) => {
-        console.error('Logout failed:', err);
-        this.isLoggedInSubject.next(false);
-        this.userSubject.next(null);
-      },
-    });
+    this.http
+      .get(`${this.apiUrl}/users/logout`, { withCredentials: true })
+      .subscribe({
+        next: () => {
+          this.isLoggedInSubject.next(false);
+          this.userSubject.next(null);
+        },
+        error: (err) => {
+          console.error('Logout failed:', err);
+          this.isLoggedInSubject.next(false);
+          this.userSubject.next(null);
+        },
+      });
   }
 
   sendResetLink(email: string) {

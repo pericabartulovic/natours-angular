@@ -1,5 +1,5 @@
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { valueGreaterThan } from '../../../../../shared/validators/values.validator';
+import { compareValues } from '../../../../../shared/validators/values.validator';
 import { Injectable } from '@angular/core';
 
 @Injectable({ providedIn: 'root' })
@@ -26,7 +26,9 @@ export class TourFormBuilder {
           price: ['', Validators.required],
           priceDiscount: ['0'],
         },
-        { validators: valueGreaterThan('price', 'priceDiscount') },
+        {
+          validators: compareValues('price', 'priceDiscount', 'priceValidator'),
+        },
       ),
       summary: ['', Validators.required],
       description: [''],

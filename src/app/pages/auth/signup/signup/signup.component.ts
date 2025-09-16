@@ -7,12 +7,22 @@ import {
 } from '@angular/forms';
 import { AuthService } from '../../../../services/auth.service';
 import { Router } from '@angular/router';
-import { equalValues } from '../../../../shared/validators/values.validator';
+import { compareValues } from '../../../../shared/validators/values.validator';
 import { BtnPassVisibleComponent } from '../../../../components/shared/btn-pass-visible/btn-pass-visible.component';
+import { ControlErrorDirective } from '../../../../shared/control-error/control-error.directive';
+import {
+  FORM_ERROR_MESSAGES,
+  defaultErrorMessages,
+} from '../../../../shared/control-error/form-errors';
 
 @Component({
   selector: 'app-signup',
-  imports: [ReactiveFormsModule, BtnPassVisibleComponent],
+  imports: [
+    ReactiveFormsModule,
+    BtnPassVisibleComponent,
+    ControlErrorDirective,
+  ],
+  providers: [{ provide: FORM_ERROR_MESSAGES, useValue: defaultErrorMessages }],
   templateUrl: './signup.component.html',
   styleUrl: './signup.component.scss',
 })
@@ -40,7 +50,9 @@ export class SignupComponent {
         }),
       },
       {
-        validators: [equalValues('password', 'passwordConfirm')],
+        validators: [
+          compareValues('password', 'passwordConfirm', 'passValidator'),
+        ],
       },
     ),
   });
@@ -54,27 +66,27 @@ export class SignupComponent {
     return this.form.get('passwords') as FormGroup;
   }
 
-  get nameIsEmpty() {
-    return (
-      this.form.controls.name.touched &&
-      this.form.controls.name.dirty &&
-      this.form.controls.name.invalid
-    );
-  }
+  // get nameIsEmpty() {
+  //   return (
+  //     this.form.controls.name.touched &&
+  //     this.form.controls.name.dirty &&
+  //     this.form.controls.name.invalid
+  //   );
+  // }
 
-  get passwordIsInvalid() {
-    return (
-      this.form.controls.passwords.controls.password.touched &&
-      this.form.controls.passwords.controls.password.invalid
-    );
-  }
+  // get passwordIsInvalid() {
+  //   return (
+  //     this.form.controls.passwords.controls.password.touched &&
+  //     this.form.controls.passwords.controls.password.invalid
+  //   );
+  // }
 
-  get passwordConfirmIsInvalid() {
-    return (
-      this.form.controls.passwords.controls.passwordConfirm.touched &&
-      this.form.controls.passwords.controls.passwordConfirm.invalid
-    );
-  }
+  // get passwordConfirmIsInvalid() {
+  //   return (
+  //     this.form.controls.passwords.controls.passwordConfirm.touched &&
+  //     this.form.controls.passwords.controls.passwordConfirm.invalid
+  //   );
+  // }
 
   onSubmit() {
     this.loading = true;
