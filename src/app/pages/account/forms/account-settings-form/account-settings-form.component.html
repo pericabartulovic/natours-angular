@@ -29,25 +29,27 @@
 
 <div class="line">&nbsp;</div>
 
+<!-- Change password -->
+
 <div class="form-account__container">
   <h2 class="heading-secondary ma-bt-md">Password change</h2>
   <form [formGroup]="formPasswords" (ngSubmit)="onSubmitPassword()" class="form form-user-password">
     <div class="form__group">
       <label class="form__label" for="passwordCurrent">Current password</label>
       <input #passwordCurrentInput id="passwordCurrent" class="form__input" type="password" placeholder="••••••••"
-        formControlName="passwordCurrent" />
+        formControlName="passwordCurrent" appControlError />
       <app-btn-pass-visible [input]="passwordCurrentInput" />
     </div>
     <div class="form__group">
       <label class="form__label" for="password">New password</label>
       <input #passwordInput id="password" class="form__input" type="password" placeholder="••••••••"
-        formControlName="password" />
+        formControlName="password" appControlError />
       <app-btn-pass-visible [input]="passwordInput" />
     </div>
     <div class="form__group ma-bt-lg">
       <label class="form__label" for="passwordConfirm">Confirm password</label>
       <input #passwordConfirmInput id="passwordConfirm" class="form__input" type="password" placeholder="••••••••"
-        formControlName="passwordConfirm" />
+        formControlName="passwordConfirm" appControlError />
       <app-btn-pass-visible [input]="passwordConfirmInput" />
     </div>
     <div class="form__group right">
@@ -57,29 +59,6 @@
       </button>
     </div>
 
-    @if (passwordCurrentIsInvalid) {
-    <p class="form__error">
-      Please enter valid password (at least 8 characters long).
-    </p>
-    }
-
-    @if (passwordIsInvalid) {
-    <p class="form__error">
-      Please enter valid password (at least 8 characters long).
-    </p>
-    }
-
-    @if (passwordConfirmIsInvalid) {
-    <p class="form__error">
-      Please enter valid password to confirm (at least 8 characters long).
-    </p>
-    }
-
-    @if (formPasswords.hasError('valuesNotEqual')) {
-    <p class="form__error">
-      Passwords do not match!
-    </p>
-    }
   </form>
 </div>
 

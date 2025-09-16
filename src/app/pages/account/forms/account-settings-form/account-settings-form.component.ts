@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AsyncPipe } from '@angular/common';
+import { Observable } from 'rxjs';
+import { Router } from '@angular/router';
 import {
   FormControl,
   FormGroup,
@@ -12,14 +14,23 @@ import { compareValues } from '../../../../shared/validators/values.validator';
 import { BtnPassVisibleComponent } from '../../../../components/shared/btn-pass-visible/btn-pass-visible.component';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../../../components/shared/confirm-dialog/confirm-dialog.component';
-import { Router } from '@angular/router';
 import { User } from '../../../../models/user.model';
-import { Observable } from 'rxjs';
+import { ControlErrorDirective } from '../../../../shared/control-error/control-error.directive';
+import {
+  FORM_ERROR_MESSAGES,
+  defaultErrorMessages,
+} from '../../../../shared/control-error/form-errors';
 
 @Component({
   selector: 'app-account-settings-form',
-  imports: [ReactiveFormsModule, BtnPassVisibleComponent, AsyncPipe],
+  imports: [
+    ReactiveFormsModule,
+    BtnPassVisibleComponent,
+    AsyncPipe,
+    ControlErrorDirective,
+  ],
   templateUrl: './account-settings-form.component.html',
+  providers: [{ provide: FORM_ERROR_MESSAGES, useValue: defaultErrorMessages }],
   styleUrl: './account-settings-form.component.scss',
 })
 export class AccountSettingsFormComponent implements OnInit {
@@ -106,27 +117,6 @@ export class AccountSettingsFormComponent implements OnInit {
       ],
     },
   );
-
-  get passwordCurrentIsInvalid() {
-    return (
-      this.formPasswords.controls.passwordCurrent.touched &&
-      this.formPasswords.controls.passwordCurrent.invalid
-    );
-  }
-
-  get passwordIsInvalid() {
-    return (
-      this.formPasswords.controls.password.touched &&
-      this.formPasswords.controls.password.invalid
-    );
-  }
-
-  get passwordConfirmIsInvalid() {
-    return (
-      this.formPasswords.controls.passwordConfirm.touched &&
-      this.formPasswords.controls.passwordConfirm.invalid
-    );
-  }
 
   onSubmitPassword() {
     this.authService.updatePassword(

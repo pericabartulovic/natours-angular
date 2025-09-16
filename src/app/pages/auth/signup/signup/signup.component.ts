@@ -62,32 +62,6 @@ export class SignupComponent {
     private router: Router,
   ) {}
 
-  get passwordsGroup() {
-    return this.form.get('passwords') as FormGroup;
-  }
-
-  // get nameIsEmpty() {
-  //   return (
-  //     this.form.controls.name.touched &&
-  //     this.form.controls.name.dirty &&
-  //     this.form.controls.name.invalid
-  //   );
-  // }
-
-  // get passwordIsInvalid() {
-  //   return (
-  //     this.form.controls.passwords.controls.password.touched &&
-  //     this.form.controls.passwords.controls.password.invalid
-  //   );
-  // }
-
-  // get passwordConfirmIsInvalid() {
-  //   return (
-  //     this.form.controls.passwords.controls.passwordConfirm.touched &&
-  //     this.form.controls.passwords.controls.passwordConfirm.invalid
-  //   );
-  // }
-
   onSubmit() {
     this.loading = true;
     this.authService.signUp(
