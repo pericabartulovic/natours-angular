@@ -1,13 +1,15 @@
 import { Component, DestroyRef, input, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { AsyncPipe, DatePipe } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { Title } from '@angular/platform-browser';
+import { AuthService } from '../../services/auth.service';
+import { CheckoutService } from '../../services/checkout.service';
 import { Tour } from '../../models/tour.model';
 import { TourService } from '../../services/tour.service';
 import { OverviewBoxComponent } from '../../components/overview-box/overview-box.component';
 import { SplitStringPipe } from '../../pipes/split.pipe';
 import { ReviewCardComponent } from '../../components/review-card/review-card.component';
-import { ResolveFn } from '@angular/router';
 import { MapBoxComponent } from '../../components/map-box/map-box.component';
 
 @Component({
@@ -19,6 +21,7 @@ import { MapBoxComponent } from '../../components/map-box/map-box.component';
     OverviewBoxComponent,
     ReviewCardComponent,
     MapBoxComponent,
+    RouterLink,
   ],
   templateUrl: './tour-details.component.html',
   styleUrl: './tour-details.component.scss',
@@ -31,6 +34,8 @@ export class TourDetailsComponent implements OnInit {
   descriptionParagraphs: String[] = [];
 
   constructor(
+    public authService: AuthService,
+    private checkoutService: CheckoutService,
     private tourService: TourService,
     private title: Title,
     private destroyRef: DestroyRef,
@@ -40,6 +45,7 @@ export class TourDetailsComponent implements OnInit {
 
   ngOnInit(): void {
     this.loading = true;
+    this.authService.user$.subscribe();
     this.tourService.getTourById(this.tourId());
     const subscription = this.tourService.tour$.subscribe({
       next: (tour) => {
@@ -54,5 +60,9 @@ export class TourDetailsComponent implements OnInit {
     this.destroyRef.onDestroy(() => {
       subscription.unsubscribe();
     });
+  }
+
+  onBookTour(tourId: string) {
+    this.checkoutService.callCheckout(tourId);
   }
 }
