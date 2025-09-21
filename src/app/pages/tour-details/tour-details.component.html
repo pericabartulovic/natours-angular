@@ -117,7 +117,9 @@
             {{ tour.duration }} days. 1 adventure. Infinite memories. Make it yours today!
           </p>
           @if(authService.user$ | async) {
-          <button class="btn btn--green span-all-rows" (click)="onBookTour(tour._id)">Book tour now!</button>
+          <button class="btn btn--green span-all-rows" (click)="onBookTour(tour._id)">
+            {{loading ? 'Processing...' : 'Book tour now!'}}
+          </button>
           } @else {
           <a [routerLink]="['/users/login']" routerLinkActive="router-link-active"
             class="btn btn--green span-all-rows">Log in to book tour</a>

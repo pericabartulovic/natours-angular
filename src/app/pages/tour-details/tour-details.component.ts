@@ -56,7 +56,13 @@ export class TourDetailsComponent implements OnInit {
         }
         this.loading = false;
       },
+      error: (err) => {
+        const backendMessage =
+          err?.error?.message || 'Failed to load tour details.';
+        this.errorMsg = backendMessage;
+      },
     });
+
     this.destroyRef.onDestroy(() => {
       subscription.unsubscribe();
     });
