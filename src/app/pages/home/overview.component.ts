@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { catchError, Observable, of } from 'rxjs';
+import { Router } from '@angular/router';
 import { AsyncPipe } from '@angular/common';
 import { Tour } from '../../models/tour.model';
 import { TourService } from '../../services/tour.service';
@@ -15,15 +16,22 @@ import { CardComponent } from '../../components/card/card.component';
   },
 })
 export class OverviewComponent {
-  $tours: Observable<Tour[]>;
+  tours$: Observable<Tour[]>;
   errorMsg = '';
 
-  constructor(private tourService: TourService) {
-    this.$tours = this.tourService.getTours().pipe(
-      catchError((err) => {
-        this.errorMsg = 'Failed to load tours! Please try later again.';
-        return of([]);
-      }),
-    );
+  constructor(
+    private tourService: TourService,
+    private router: Router,
+  ) {
+    if (!this.router.url.includes('/my-bookings')) {
+      this.tours$ = this.tourService.getTours().pipe(
+        catchError((err) => {
+          this.errorMsg = 'Failed to load tours! Please try later again.';
+          return of([]);
+        }),
+      );
+    } else {
+      this.tours$ = this.tourService.getMyBookings();
+    }
   }
 }

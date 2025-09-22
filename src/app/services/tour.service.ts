@@ -114,4 +114,24 @@ export class TourService {
         },
       });
   }
+
+  getMyBookings() {
+    return this.http
+      .get<{
+        results: number;
+        status: string;
+        tours: Tour[];
+      }>(`${this.apiUrl}/users/myBookings`, { withCredentials: true })
+      .pipe(
+        map((response) => response.tours),
+        catchError((error) => {
+          console.error('API error:', error);
+          this.notificationService.notify({
+            message: '',
+            type: 'error',
+          });
+          return throwError(() => error);
+        }),
+      );
+  }
 }

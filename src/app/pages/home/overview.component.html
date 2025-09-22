@@ -1,4 +1,4 @@
-@if ($tours | async; as tours) {
+@if (tours$ | async; as tours) {
 @if (tours.length > 0) {
 @for (tour of tours; track tour._id) {
 <app-card [tour]="tour"></app-card>
