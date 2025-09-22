@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { catchError, Observable, of } from 'rxjs';
 import { Router } from '@angular/router';
 import { AsyncPipe } from '@angular/common';
@@ -15,14 +15,16 @@ import { CardComponent } from '../../components/card/card.component';
     class: 'cards-container',
   },
 })
-export class OverviewComponent {
-  tours$: Observable<Tour[]>;
+export class OverviewComponent implements OnInit {
+  tours$!: Observable<Tour[]>;
   errorMsg = '';
 
   constructor(
     private tourService: TourService,
     private router: Router,
-  ) {
+  ) {}
+
+  ngOnInit(): void {
     if (!this.router.url.includes('/my-bookings')) {
       this.tours$ = this.tourService.getTours().pipe(
         catchError((err) => {
