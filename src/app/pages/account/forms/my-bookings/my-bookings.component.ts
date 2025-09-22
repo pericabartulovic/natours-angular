@@ -2,9 +2,9 @@ import { Component } from '@angular/core';
 import { OverviewComponent } from '../../../home/overview.component';
 
 @Component({
-  selector: 'app-my-bookings-form',
+  selector: 'app-my-bookings',
   imports: [OverviewComponent],
-  templateUrl: './my-bookings-form.component.html',
-  styleUrl: './my-bookings-form.component.scss',
+  templateUrl: './my-bookings.component.html',
+  styleUrl: './my-bookings.component.scss',
 })
 export class MyBookingsFormComponent {}

@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { AccountSettingsFormComponent } from '../pages/account/forms/account-settings-form/account-settings-form.component';
-import { MyBookingsFormComponent } from '../pages/account/forms/my-bookings-form/my-bookings-form.component';
+import { MyBookingsFormComponent } from '../pages/account/forms/my-bookings/my-bookings.component';
 import { MyReviewsFormComponent } from '../pages/account/forms/my-reviews-form/my-reviews-form.component';
 import { BillingFormComponent } from '../pages/account/forms/billing-form/billing-form.component';
 import { ToursFormComponent } from '../pages/account/forms/tours-form/tours-form.component';
