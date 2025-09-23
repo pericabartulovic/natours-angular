@@ -92,11 +92,12 @@
 
     <!-- Section Reviews -->
     <section class="section-reviews">
-      <div class="reviews">
-        @for(review of tour.reviews; track review) {
-        <app-review-card [review]="review" class="reviews__card" />
-        }
-      </div>
+      <p-carousel [value]="tour?.reviews || []" [numVisible]="4" [numScroll]="1" [circular]="true"
+        autoplayInterval="3000" [responsiveOptions]="responsiveOptions">
+        <ng-template pTemplate="item" let-review>
+          <app-review-card [review]="review" class="reviews__card"></app-review-card>
+        </ng-template>
+      </p-carousel>
     </section>
 
     <!-- Section CTA -->

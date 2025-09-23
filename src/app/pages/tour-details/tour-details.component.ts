@@ -11,6 +11,7 @@ import { OverviewBoxComponent } from '../../components/overview-box/overview-box
 import { SplitStringPipe } from '../../pipes/split.pipe';
 import { ReviewCardComponent } from '../../components/review-card/review-card.component';
 import { MapBoxComponent } from '../../components/map-box/map-box.component';
+import { CarouselModule } from 'primeng/carousel';
 
 @Component({
   selector: 'app-tour-details',
@@ -22,6 +23,7 @@ import { MapBoxComponent } from '../../components/map-box/map-box.component';
     ReviewCardComponent,
     MapBoxComponent,
     RouterLink,
+    CarouselModule,
   ],
   templateUrl: './tour-details.component.html',
   styleUrl: './tour-details.component.scss',
@@ -71,4 +73,22 @@ export class TourDetailsComponent implements OnInit {
   onBookTour(tourId: string) {
     this.checkoutService.callCheckout(tourId);
   }
+
+  responsiveOptions = [
+    {
+      breakpoint: '1367px',
+      numVisible: 3,
+      numScroll: 3,
+    },
+    {
+      breakpoint: '1025px',
+      numVisible: 2,
+      numScroll: 2,
+    },
+    {
+      breakpoint: '561px',
+      numVisible: 1,
+      numScroll: 1,
+    },
+  ];
 }

@@ -1,3 +1,5 @@
+@use '../../assets/styles/mixins.scss'as *;
+
 /////// BUTTON ///////
 .btn,
 .btn:link,
@@ -461,4 +463,34 @@ select {
   &:focus-visible {
     outline-color: #9b4fc5;
   }
+}
+
+.p-carousel-item {
+  display: flex;
+  justify-content: center;
+}
+
+.p-carousel-indicator-list {
+  padding: 2rem 1rem 1rem !important;
+}
+
+.p-carousel-indicator-button {
+  background: #7b19bb !important;
+
+  &:hover {
+    background: #b040fd !important;
+  }
+}
+
+.p-carousel-indicator-active .p-carousel-indicator-button {
+  background: #e8beff !important;
+}
+
+.p-button-text.p-button-secondary {
+  color: #7b19bb !important;
+}
+
+.p-icon {
+  width: 1.5rem !important;
+  height: 1.5rem !important;
 }

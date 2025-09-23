@@ -4,6 +4,9 @@ import {
   withComponentInputBinding,
   withRouterConfig,
 } from '@angular/router';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { providePrimeNG } from 'primeng/config';
+import Aura from '@primeuix/themes/aura';
 
 import { routes } from './routes/app.routes';
 import { provideHttpClient } from '@angular/common/http';
@@ -22,5 +25,11 @@ export const appConfig: ApplicationConfig = {
     ),
     provideHttpClient(),
     { provide: API_URL, useValue: environment.apiUrl },
+    provideAnimationsAsync(),
+    providePrimeNG({
+      theme: {
+        preset: Aura,
+      },
+    }),
   ],
 };
