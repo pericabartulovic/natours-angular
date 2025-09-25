@@ -12,8 +12,9 @@ import { AuthService } from '../../../../services/auth.service';
 import { UserService } from '../../../../services/user.service';
 import { compareValues } from '../../../../shared/validators/values.validator';
 import { BtnPassVisibleComponent } from '../../../../components/shared/btn-pass-visible/btn-pass-visible.component';
-import { MatDialog } from '@angular/material/dialog';
-import { ConfirmDialogComponent } from '../../../../components/shared/confirm-dialog/confirm-dialog.component';
+// import { MatDialog } from '@angular/material/dialog';
+// import { ConfirmDialogComponent } from '../../../../components/shared/confirm-dialog/confirm-dialog.component';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { User } from '../../../../models/user.model';
 import { ControlErrorDirective } from '../../../../shared/control-error/control-error.directive';
 import {
@@ -40,8 +41,9 @@ export class AccountSettingsFormComponent implements OnInit {
   constructor(
     public authService: AuthService,
     public userService: UserService,
-    private dialog: MatDialog,
     private router: Router,
+    private confirmationService: ConfirmationService,
+    private messageService: MessageService,
   ) {
     this.user$ = this.authService.user$;
   }
@@ -129,23 +131,31 @@ export class AccountSettingsFormComponent implements OnInit {
   }
 
   onDeleteAccount() {
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      data: {
-        title: 'Delete Account',
-        message: 'Are you sure you want to permanently delete your account?',
+    this.confirmationService.confirm({
+      message:
+        'Are you sure you want to delete your account? This action cannot be undone.',
+      header: 'Delete Confirmation',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.deleteAccount();
+      },
+      reject: () => {
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Cancelled',
+          detail: 'Your account is safe.',
+        });
       },
     });
+  }
 
-    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
-      if (confirmed) {
-        this.userService.deleteMe().subscribe({
-          next: () => {
-            this.authService.logout();
-            this.router.navigate(['/tours']);
-          },
-          error: (err) => console.error('Error deleting account', err),
-        });
-      }
+  deleteAccount() {
+    this.userService.deleteMe().subscribe({
+      next: () => {
+        this.authService.logout();
+        this.router.navigate(['/tours']);
+      },
+      error: (err) => console.error('Error deleting account', err),
     });
   }
 }

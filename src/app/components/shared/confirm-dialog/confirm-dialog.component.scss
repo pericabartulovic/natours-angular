@@ -1,3 +1,25 @@
-.mdc-button {
-  border-radius: 10rem;
+::ng-deep .btn-dialog .p-button-label {
+  font-size: 1.5rem !important;
+}
+
+::ng-deep .custom-toast .p-toast-message {
+  @apply border-l-4 border-purple-500 text-white rounded-lg p-4 shadow-lg;
+}
+
+::ng-deep .custom-toast .p-toast-message {
+  background-color: #cd73fe;
+  color: white;
+  font-size: 1.2rem;
+  border-radius: 0.5rem;
+  padding: 1rem 1.5rem;
+}
+
+::ng-deep .custom-toast .p-toast-message .p-toast-summary {
+  font-weight: bold;
+  font-size: 1.5rem;
+}
+
+::ng-deep .custom-toast .p-toast-message .p-toast-detail {
+  font-size: 1.25rem;
+  color: white;
 }
