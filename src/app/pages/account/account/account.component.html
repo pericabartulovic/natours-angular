@@ -1,0 +1,13 @@
+@if(authService.user$ | async; as user) {
+<div class="user-view">
+  <nav class="user-view__menu">
+    <app-side-nav [role]="user.role" />
+  </nav>
+
+  <div class="user-view__content">
+    <router-outlet></router-outlet>
+  </div>
+</div>
+} @else {
+<div class="loading heading-secondary">Please log in to access account settings</div>
+}

@@ -1,0 +1,54 @@
+@use "./variables.scss"as *;
+@use "./mixins"as *;
+
+::-moz-selection {
+  background-color: #8001c6;
+  color: #fff;
+}
+
+::selection {
+  background-color: #8001c6;
+  color: #fff;
+}
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: inherit;
+}
+
+html {
+  height: 100%;
+  font-size: 50%;
+  box-sizing: border-box;
+
+  @include respond(md) {
+    font-size: 62.5%;
+  }
+}
+
+body {
+  height: 100%;
+  line-height: 1.6;
+  font-weight: 300;
+  font-family: 'Lato', sans-serif;
+  color: #777;
+  // padding: .5rem;
+
+  // @include respond(md) {
+  // padding: 2rem;
+  // }
+
+  // @include respond(lg) {
+  // padding: 3rem;
+  // }
+}
+
+app-root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  // /* Optional: ensure full viewport height */
+}

@@ -1,0 +1,11 @@
+<button class="btn-password" type="button" (click)="togglePasswordVisibility()">
+  @if(input.type === 'password'){
+  <svg class="btn-password__icon">
+    <use xlink:href="/assets/img/icons.svg#icon-eye"></use>
+  </svg>
+  } @else {
+  <svg class="btn-password__icon">
+    <use xlink:href="/assets/img/icons.svg#icon-eye-off"></use>
+  </svg>
+  }
+</button>

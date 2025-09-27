@@ -1,0 +1,27 @@
+@use '../../../assets/styles/mixins.scss'as *;
+
+/*aka .cards-container*/
+:host {
+  max-width: 120rem;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  grid-gap: 4rem;
+
+  @include respond(md) {
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 5rem;
+  }
+
+  @include respond(lg) {
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 7rem;
+  }
+}
+
+.no-tours-message,
+.loading-message {
+  padding: 2rem;
+  text-align: center;
+  grid-area: 1/1/1/4;
+}

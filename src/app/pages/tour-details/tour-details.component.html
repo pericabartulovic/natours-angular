@@ -1,0 +1,138 @@
+<div>
+  @if (tour$ | async; as tour) {
+  <div>
+    <!-- Section Header -->
+    <section class="section-header">
+      <div class="header__hero">
+        <div class="header__hero-overlay">&nbsp;</div>
+        <!-- <img class="header__hero-img" :src="`/img/tours/${tour.imageCover}`" :alt="tour.name" /> -->
+        <img class="header__hero-img" [src]="`http://localhost:3000/img/tours/${tour.imageCover}`" [alt]="tour.name" />
+      </div>
+      <div class="heading-box">
+        <h1 class="heading-primary">
+          <span>{{ tour.name }} tour</span>
+        </h1>
+        <div class="heading-box__group">
+          <div class="heading-box__detail">
+            <svg class="heading-box__icon">
+              <use [attr.xlink:href]="'/assets/img/icons.svg#icon-clock'"></use>
+            </svg>
+            <span class="heading-box__text">{{ tour.duration }} days</span>
+          </div>
+          <div class="heading-box__detail">
+            <svg class="heading-box__icon">
+              <use [attr.xlink:href]="'/assets/img/icons.svg#icon-map-pin'"></use>
+            </svg>
+            <span class="heading-box__text">{{ tour.startLocation.description }}</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section Description -->
+    <section class="section-description">
+      <div class="overview-box">
+        <div>
+          <div class="overview-box__group">
+            <h2 class="heading-secondary ma-bt-lg">Quick facts</h2>
+            <app-overview-box label="Next date" [text]="`${tour.startDates[0]}` | date:'MMMM yyyy'" [icon]="'calendar'"
+              class="overview-box__detail" />
+            <app-overview-box label="Difficulty" [text]="tour.difficulty" [icon]="'trending-up'"
+              class="overview-box__detail" />
+            <app-overview-box label="Participants" [text]="`${tour.maxGroupSize} people`" [icon]="'user'"
+              class="overview-box__detail" />
+            <app-overview-box label="Rating" [text]="`${tour.ratingsAverage} / 5`" [icon]="'star'"
+              class="overview-box__detail" />
+          </div>
+          <div class="overview-box__group">
+            <h2 class="heading-secondary ma-bt-lg">Your tour guides</h2>
+            @for (guide of tour.guides; track guide._id) {
+            <div class="overview-box__detail">
+              <!-- <img class="overview-box__img" :src="`/img/users/${guide.photo}`" :alt="guide.name" /> -->
+              <img class="overview-box__img" [src]="`http://localhost:3000/img/users/${guide.photo}`"
+                [alt]="guide.name" />
+              @if(guide.role === 'lead-guide') {
+              <span class="overview-box__label">Lead guide</span>
+              } @else if (guide.role === 'guide'){
+              <span class="overview-box__label">Tour guide</span>
+              }
+              <span class="overview-box__text">{{ guide.name }}</span>
+            </div>
+            }
+          </div>
+        </div>
+      </div>
+      <div class="description-box">
+        <h2 class="heading-secondary ma-bt-lg">About {{ tour.name }} tour</h2>
+        @for(p of tour.description | splitString; track $index) {
+        <p class="description__text">{{ p }}</p>
+        }
+      </div>
+    </section>
+
+    <!-- Section Pictures -->
+    <section class="section-pictures">
+      @for(img of tour.images; track img; let i = $index) {
+      <div class="picture-box">
+        <!-- <img class="picture-box__img" :src="`/img/tours/${img}`" :alt="`The Park Camper Tour ${i + 1}`" -->
+        <img class="picture-box__img" [src]="`http://localhost:3000/img/tours/${img}`"
+          [alt]="`The Park Camper Tour ${i + 1}`" [class]="`picture-box__img--${i + 1}`" />
+      </div>
+      }
+    </section>
+
+    <!-- Section Map -->
+    <section class="section-map">
+      @if(tour) {
+      @if(tour.locations) {
+      <app-map-box [locations]="tour.locations" />
+      }
+      }
+    </section>
+
+    <!-- Section Reviews -->
+    <section class="section-reviews">
+      <p-carousel [value]="tour?.reviews || []" [numVisible]="4" [numScroll]="1" [circular]="true"
+        autoplayInterval="3000" [responsiveOptions]="responsiveOptions">
+        <ng-template pTemplate="item" let-review>
+          <app-review-card [review]="review" class="reviews__card"></app-review-card>
+        </ng-template>
+      </p-carousel>
+    </section>
+
+    <!-- Section CTA -->
+    <section class="section-cta">
+      <div class="cta">
+        <div class="cta__img cta__img--logo">
+          <img src="/assets/img/logo-white.png" alt="Natours logo" />
+        </div>
+        <!-- <img class="cta__img cta__img--1" :src="`/img/tours/${tour.images[1]}`" alt="Tour picture" />
+              <img class="cta__img cta__img--2" :src="`/img/tours/${tour.images[2]}`" alt="Tour picture" /> -->
+        <img class="cta__img cta__img--1" [src]="`http://localhost:3000/img/tours/${tour.images[1]}`"
+          alt="Tour picture" />
+        <img class="cta__img cta__img--2" [src]="`http://localhost:3000/img/tours/${tour.images[2]}`"
+          alt="Tour picture" />
+        <div class="cta__content">
+          <h2 class="heading-secondary">What are you waiting for?</h2>
+          <p class="cta__text">
+            {{ tour.duration }} days. 1 adventure. Infinite memories. Make it yours today!
+          </p>
+          @if(authService.user$ | async) {
+          <button class="btn btn--green span-all-rows" (click)="onBookTour(tour._id)">
+            {{loading ? 'Processing...' : 'Book tour now!'}}
+          </button>
+          } @else {
+          <a [routerLink]="['/users/login']" routerLinkActive="router-link-active"
+            class="btn btn--green span-all-rows">Log in to book tour</a>
+          }
+        </div>
+      </div>
+    </section>
+  </div>
+  } @else if (errorMsg) {
+  <div class=" heading-secondary error">{{ errorMsg }}</div>
+  }
+  @else {
+  <div class="loading heading-secondary">Loading...</div>
+  }
+</div>

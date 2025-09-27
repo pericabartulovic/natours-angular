@@ -1,0 +1,196 @@
+@if(user$ | async; as user) {
+<div class="form-account__container form-account__container--wide">
+  <h2 class="heading-secondary ma-bt-md">Tour settings</h2>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form form-user-data">
+    <div class="form__group">
+      <label for="name" class="form__label form__label--asterisk">Name</label>
+      <input id="name" class="form__input" type="text" formControlName="name" appControlError />
+    </div>
+    <!-- BASIC DETAILS -->
+    <fieldset>
+      <div class="form__group form__group--basis">
+        <label class="form__label form__label--asterisk" for="duration">Duration</label>
+        <input id="duration" class="form__input" type="number" formControlName="duration" appControlError />
+      </div>
+      <div class="form__group form__group--basis">
+        <label class="form__label form__label--asterisk" for="max-group-size">Max group size</label>
+        <input id="max-group-size" class="form__input" type="number" formControlName="maxGroupSize" appControlError />
+      </div>
+      <div class="form__group form__group--basis">
+        <label class="form__label form__label--asterisk" for="difficulty">Difficulty</label>
+        <select id="difficulty" name="difficulty" formControlName="difficulty" class="wd-100" appControlError>
+          <option value="easy">Easy</option>
+          <option value="medium">Medium</option>
+          <option value="difficult">Difficult</option>
+        </select>
+      </div>
+      <div class="form__prices-group flex--bottom-line" formGroupName="prices">
+        <div class="form__group flex--grow">
+          <label class="form__label form__label--asterisk" for="price">Price</label>
+          <input id="price" class="form__input" type="number" step="any" formControlName="price" appControlError />
+        </div>
+        <div class="form__group flex--grow">
+          <label class="form__label" for="priceDiscount">Discount price</label>
+          <input id="priceDiscount" class="form__input" type="number" step="any" formControlName="priceDiscount"
+            appControlError />
+        </div>
+      </div>
+      <div class="form__group form__group--basis form__checkbox">
+        <input type="checkbox" id="secret" class="form__input" name="secret" formControlName="secret" />
+        <label class="form__label" for="secret">Secret tour</label>
+      </div>
+    </fieldset>
+    <!-- SUMMARY AND DESCRIPTION -->
+    <fieldset class="flex--vertical">
+      <div class="form__group ma-bt-md wd-100">
+        <label class="form__label form__label--asterisk" for="summary">Summary</label>
+        <textarea id="summary" class="form__input" rows="2" formControlName="summary" appControlError></textarea>
+      </div>
+      <div class="form__group ma-bt-md wd-100">
+        <label class="form__label" for="description">Description</label>
+        <textarea id="description" class="form__input" rows="3" formControlName="description"></textarea>
+      </div>
+    </fieldset>
+    <!-- IMAGES -->
+    <fieldset class="flex--just-center">
+      <legend class="form__label--asterisk">Cover image and tour images</legend>
+      <div class="form__group form__photo-upload ma-bt-none">
+        <img class="form__tour-photo" [src]="coverPreview || 'http://localhost:3000/img/tours/placeholder.png'"
+          alt="Cover image preview" />
+        @if (!coverPreview) {
+        <input class="form__upload" type="file" accept="image/*" id="imageCover"
+          (change)="onFileSelected($event, 'cover')" />
+        }
+        @if(coverPreview) {
+        <button type="button" (click)="removeImage('cover')" class="btn--delete">
+          ✖️
+        </button>
+        }
+        <label for="imageCover">cover</label>
+      </div>
+      <input type="hidden" formControlName="imageCover" appControlError />
+
+      @for(img of [0,1,2]; track img) {
+      <div class="form__group form__photo-upload ma-bt-none" formArrayName="images">
+        <img class="form__tour-photo" [src]="imagePreviews[img] || 'http://localhost:3000/img/tours/placeholder.png'"
+          alt="Tour image preview" />
+        @if (!imagePreviews[img]) {
+        <input class="form__upload" type="file" accept="image/*" [id]="'image' + img"
+          (change)="onFileSelected($event, img)" />
+        }
+        @if(imagePreviews[img]) {
+        <button type="button" (click)="removeImage(img)" class="btn--delete">
+          ✖️
+        </button>
+        }
+        <label [for]="'image' + img">image {{ img + 1 }}</label>
+      </div>
+      }
+    </fieldset>
+    <!-- DATES -->
+    <fieldset formArrayName="startDates">
+      <legend>Start Dates</legend>
+      @for(date of startDates.controls; let i = $index; track i) {
+      <div class="form__group" [formGroupName]="i">
+        <label class="form__label" for="date">{{i + 1}}. start date</label>
+        <input id="date" class="form__input" type="date" formControlName="date" />
+        <button type="button" class="btn--delete" (click)="removeDate(i)">✖️</button>
+      </div>
+      }
+      <button type="button" class="btn btn--small btn--white btn--icon flex--al-selfc" (click)="addDate()">➕</button>
+    </fieldset>
+    <!-- START LOCATION -->
+    <fieldset formGroupName="startLocation">
+      <legend>Start Location</legend>
+      <div formGroupName="startCoordinates" class="coordinates">
+        <div class="form__group">
+          <label class="form__label" for="start-lon">Longitude</label>
+          <input id="start-lon" class="form__input" type="number" step="any" formControlName="lng" />
+        </div>
+        <div class="form__group">
+          <label class="form__label" for="start-lat">Latitude</label>
+          <input id="start-lat" class="form__input" type="number" step="any" formControlName="lat" />
+        </div>
+      </div>
+      <div class="form__group flex--grow">
+        <label class="form__label" for="address">Address</label>
+        <input id="address" class="form__input" type="text" formControlName="startAddress" />
+      </div>
+      <div class="form__group wd-100 ma-bt-md">
+        <label class="form__label" for="description">Description</label>
+        <input id="description" class="form__input" type="text" formControlName="startDescription" />
+      </div>
+    </fieldset>
+    <!-- LOCATIONS -->
+    <fieldset formArrayName="locations">
+      <legend>Locations</legend>
+      @for(loc of locations.controls; let i = $index; track i) {
+      <div [formGroupName]="i" class="form__location-group br-bottom">
+        <span>Location {{i + 1}}</span>
+        <div class="form__group coordinates flex--grow" formGroupName="coordinates">
+          <div class="form__group flex--grow">
+            <label class="form__label">Longitude</label>
+            <input class="form__input" type="number" step="any" formControlName="lng" />
+          </div>
+          <div class="form__group flex--grow">
+            <label class="form__label">Latitude</label>
+            <input class="form__input" type="number" step="any" formControlName="lat" />
+          </div>
+        </div>
+        <div class="form__group">
+          <label class="form__label">Day</label>
+          <input class="form__input" type="number" formControlName="day" />
+        </div>
+        <div class="form__group flex--grow">
+          <label class="form__label">Description</label>
+          <input class="form__input" type="text" formControlName="description" />
+        </div>
+        <button type="button" class="btn--delete" (click)="removeLocation(i)">✖️</button>
+      </div>
+      }
+      <hr>
+      <button type="button" class="btn btn--small btn--white btn--icon" (click)="addLocation()">➕</button>
+    </fieldset>
+    <!-- GUIDES -->
+    <fieldset formArrayName="guides">
+      <legend>Guides</legend>
+      <div class="form__group--basis flex--al-selfc">
+        <div class="form__group">
+          <select id="guide-select" class="wd-100" [formControl]="guideSelectControl" appControlError>
+            <option [ngValue]="null" disabled selected>-- Select a guide --</option>
+            @if(guides$ | async; as guides) {
+            @for (guide of guides; track guide._id) {
+            <option [ngValue]="guide">
+              {{ guide.name }}
+            </option>
+            }
+            }
+          </select>
+        </div>
+      </div>
+      <div class="form__group ma-bt-none flex--al-selfc">
+        <button type="button" (click)="addGuide()" class="btn btn--small btn--green btn--add">Add</button>
+      </div>
+      @if(guidesArray.controls.length > 0) {
+      <div class="form__group selected-guides flex--al-selfc">
+        @for(g of guidesArray.controls; let i = $index; track i ) {
+        <div [formGroupName]="i" class="selected-guides--guide">
+          <img class="form__guide-photo"
+            [src]="`http://localhost:3000/img/users/${g.value.photo}` || `http://localhost:3000/img/users/default.jpg`">
+          <span>
+            {{ g.value.name }} ({{ g.value.role }})
+          </span>
+          <button type="button" (click)="removeGuide(i)" class="btn--delete btn--delete-rel">✖️</button>
+        </div>
+        }
+      </div>
+      }
+    </fieldset>
+    <div class="form__group right">
+      <button class="btn btn--small btn--green" type="submit" [disabled]="form.invalid">
+        {{ isEditMode ? 'Update' : 'Save' }}
+      </button>
+    </div>
+  </form>
+</div>
+}

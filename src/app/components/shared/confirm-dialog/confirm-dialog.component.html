@@ -1,0 +1,22 @@
+<p-toast styleClass="custom-toast"></p-toast>
+<p-confirmdialog #cd>
+  <ng-template #headless let-message let-onAccept="onAccept" let-onReject="onReject">
+    <div class="flex flex-col items-center p-8 bg-gray-50 rounded shadow-lg">
+      <div
+        class="rounded-full bg-purple-500 text-white inline-flex justify-center items-center h-24 w-24 -mt-20 shadow-md">
+        <i class="pi pi-question !text-5xl"></i>
+      </div>
+      <span class="font-bold text-3xl block mb-2 mt-6 text-gray-800">
+        {{ message.header }}
+      </span>
+      <p class="mb-0 text-gray-700 text-2xl">{{ message.message }}</p>
+      <div class="flex items-center gap-4 mt-6">
+        <p-button label="Delete" (onClick)="onAccept()" class="w-32 text-white btn-dialog" severity="help"
+          [rounded]="true" size="large" [raised]="true"></p-button>
+
+        <p-button label="Cancel" [outlined]="true" (onClick)="onReject()" class="w-32 text-gray-800 btn-dialog"
+          [style.fontSize]="'1.5rem'" severity="help" size="large" [rounded]="true" [raised]="true"></p-button>
+      </div>
+    </div>
+  </ng-template>
+</p-confirmdialog>

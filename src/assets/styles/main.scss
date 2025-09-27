@@ -1,0 +1,10 @@
+@forward './variables';
+@forward './mixins';
+@forward './base';
+@forward './layout';
+@forward './components';
+
+@use "primeicons/primeicons.css";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

@@ -1,0 +1,24 @@
+<header class="header">
+  <div class="header__logo">
+    <img src="/assets/img/logo-white.png" alt="Natours logo" />
+  </div>
+  <nav class="nav">
+    <a [routerLink]="[ '/tours' ]" class="nav__el">All tours</a>
+    @if (authService.isLoggedIn$ | async) {
+    @if (authService.user$ | async; as user) {
+    <a [routerLink]="['/users/me']" class="nav__el">
+      <img [src]="'http://localhost:3000/img/users/' + user.photo" [alt]="'Photo of ' + user.name"
+        class="nav__user-img" />
+      <span>{{ user.name.split(' ')[0] }}</span>
+    </a>
+
+    <button class="nav__el nav__el--logout" (click)="handleLogout()">Log out</button>
+    }
+    }
+    @else {
+    <a [routerLink]="['/users/login']" class="nav__el">Log in</a>
+    <a [routerLink]="['/users/signup']" class="nav__el nav__el--cta">Sign up</a>
+    }
+
+  </nav>
+</header>
