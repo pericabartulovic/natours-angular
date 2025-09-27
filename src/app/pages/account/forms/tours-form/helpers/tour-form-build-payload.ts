@@ -63,7 +63,6 @@ export class TourFormBuildPayload {
     formattedDates?.forEach((date) => formData.append('startDates', date));
 
     // Guides
-    console.log('Guide payload:', guidesArray.value);
     guidesArray.value.forEach((g: any) => {
       if (g._id) formData.append('guides', g._id);
     });

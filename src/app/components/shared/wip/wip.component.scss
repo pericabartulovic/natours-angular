@@ -1,0 +1,12 @@
+.wip {
+  &__icon {
+    height: 8rem;
+    width: 100%;
+    fill: #9b4fc5;
+  }
+
+  &__text {
+    white-space: pre-line;
+    line-height: 4rem;
+  }
+}

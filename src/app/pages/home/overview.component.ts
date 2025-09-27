@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, input, OnInit } from '@angular/core';
 import { catchError, Observable, of } from 'rxjs';
 import { Router } from '@angular/router';
 import { AsyncPipe } from '@angular/common';
@@ -18,14 +18,19 @@ import { CardComponent } from '../../components/card/card.component';
 export class OverviewComponent implements OnInit {
   tours$!: Observable<Tour[]>;
   errorMsg = '';
+  isMyBookingPage: boolean = false;
 
   constructor(
     private tourService: TourService,
     private router: Router,
-  ) {}
+  ) {
+    this.router.url.includes('/my-bookings')
+      ? (this.isMyBookingPage = true)
+      : (this.isMyBookingPage = false);
+  }
 
   ngOnInit(): void {
-    if (!this.router.url.includes('/my-bookings')) {
+    if (!this.isMyBookingPage) {
       this.tours$ = this.tourService.getTours().pipe(
         catchError((err) => {
           this.errorMsg = 'Failed to load tours! Please try later again.';

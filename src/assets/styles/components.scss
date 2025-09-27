@@ -438,13 +438,13 @@
 }
 
 fieldset {
-  padding: 1rem;
+  padding: 1rem !important;
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
   align-content: center;
   align-items: baseline;
-  margin-bottom: 2rem;
+  margin-bottom: 2rem !important;
   border: 2px solid #e7cdff;
   border-radius: 4px;
 }
@@ -455,9 +455,10 @@ legend {
 }
 
 select {
+  font-size: 1.4rem !important;
   height: 4.5rem;
   border-radius: 4px;
-  padding-left: 1rem;
+  padding-left: 1rem !important;
   border: 2px solid #e7cdff;
   background-color: #fafafa;
 
