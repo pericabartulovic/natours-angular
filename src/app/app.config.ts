@@ -21,7 +21,7 @@ export const appConfig: ApplicationConfig = {
       withComponentInputBinding(),
       withRouterConfig({
         paramsInheritanceStrategy: 'always',
-      }),
+      })
     ),
     provideHttpClient(),
     { provide: API_URL, useValue: environment.apiUrl },
@@ -30,7 +30,7 @@ export const appConfig: ApplicationConfig = {
       theme: {
         preset: Lara,
         options: {
-          darkModeSelector: false || 'none',
+          darkModeSelector: 'none',
         },
       },
     }),
