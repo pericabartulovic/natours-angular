@@ -72,7 +72,8 @@
 
       @for(img of [0,1,2]; track img) {
       <div class="form__group form__photo-upload ma-bt-none" formArrayName="images">
-        <img class="form__tour-photo" [src]="imagePreviews[img] || 'http://localhost:3000/img/tours/placeholder.png'"
+        <img class="form__tour-photo"
+          [src]="imagePreviews[img] || environment.assetsBase + '/img/tours/placeholder.png'"
           alt="Tour image preview" />
         @if (!imagePreviews[img]) {
         <input class="form__upload" type="file" accept="image/*" [id]="'image' + img"
