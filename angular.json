@@ -31,7 +31,11 @@
               "src/_redirects"
             ],
             "styles": [
-              "src/styles.scss"
+              "src/styles.scss",
+              {
+                "input": "node_modules/mapbox-gl/dist/mapbox-gl.css",
+                "bundleName": "mapbox-gl"
+              }
             ],
             "scripts": []
           },
