@@ -12,7 +12,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
   selector: 'app-map-box',
   imports: [],
   templateUrl: './map-box.component.html',
-  styleUrl: './map-box.component.scss',
+  styleUrls: ['./map-box.component.scss'],
 })
 export class MapBoxComponent implements AfterViewInit {
   @ViewChild('mapContainer') private mapContainer!: ElementRef<HTMLDivElement>;
@@ -91,15 +91,15 @@ export class MapBoxComponent implements AfterViewInit {
           'line-width': 4,
         },
       });
-    });
 
-    mapInstance?.fitBounds(bounds, {
-      padding: {
-        top: 200,
-        bottom: 150,
-        left: 100,
-        right: 100,
-      },
+      mapInstance?.fitBounds(bounds, {
+        padding: {
+          top: 200,
+          bottom: 150,
+          left: 100,
+          right: 100,
+        },
+      });
     });
   }
 }
