@@ -7,7 +7,7 @@
     @if (authService.isLoggedIn$ | async) {
     @if (authService.user$ | async; as user) {
     <a [routerLink]="['/users/me']" class="nav__el">
-      <img [src]="'http://localhost:3000/img/users/' + user.photo" [alt]="'Photo of ' + user.name"
+      <img [src]="environment.assetsBase + '/img/users/' + user.photo" [alt]="'Photo of ' + user.name"
         class="nav__user-img" />
       <span>{{ user.name.split(' ')[0] }}</span>
     </a>

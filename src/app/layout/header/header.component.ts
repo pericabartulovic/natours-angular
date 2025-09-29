@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { AsyncPipe } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-header',
@@ -10,10 +11,9 @@ import { AuthService } from '../../services/auth.service';
   styleUrls: ['./header.component.scss'],
 })
 export class HeaderComponent {
-  constructor(
-    public authService: AuthService,
-    private router: Router,
-  ) {
+  environment = environment;
+
+  constructor(public authService: AuthService, private router: Router) {
     this.authService.checkAuth();
   }
   handleLogout() {
