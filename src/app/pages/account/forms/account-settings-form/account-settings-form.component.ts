@@ -12,8 +12,6 @@ import { AuthService } from '../../../../services/auth.service';
 import { UserService } from '../../../../services/user.service';
 import { compareValues } from '../../../../shared/validators/values.validator';
 import { BtnPassVisibleComponent } from '../../../../components/shared/btn-pass-visible/btn-pass-visible.component';
-// import { MatDialog } from '@angular/material/dialog';
-// import { ConfirmDialogComponent } from '../../../../components/shared/confirm-dialog/confirm-dialog.component';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { User } from '../../../../models/user.model';
 import { ControlErrorDirective } from '../../../../shared/control-error/control-error.directive';
@@ -21,6 +19,7 @@ import {
   FORM_ERROR_MESSAGES,
   defaultErrorMessages,
 } from '../../../../shared/control-error/form-errors';
+import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'app-account-settings-form',
@@ -37,13 +36,14 @@ import {
 export class AccountSettingsFormComponent implements OnInit {
   user$!: Observable<User | null>;
   photoPreview: string | ArrayBuffer | null = null;
+  environment = environment;
 
   constructor(
     public authService: AuthService,
     public userService: UserService,
     private router: Router,
     private confirmationService: ConfirmationService,
-    private messageService: MessageService,
+    private messageService: MessageService
   ) {
     this.user$ = this.authService.user$;
   }
@@ -117,14 +117,14 @@ export class AccountSettingsFormComponent implements OnInit {
       validators: [
         compareValues('password', 'passwordConfirm', 'passValidator'),
       ],
-    },
+    }
   );
 
   onSubmitPassword() {
     this.authService.updatePassword(
       this.formPasswords.controls.passwordCurrent.value!,
       this.formPasswords.controls.password.value!,
-      this.formPasswords.controls.passwordConfirm.value!,
+      this.formPasswords.controls.passwordConfirm.value!
     );
 
     this.formPasswords.reset();

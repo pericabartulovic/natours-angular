@@ -22,6 +22,7 @@ import {
 import { TourFormBuilder } from './helpers/tour-from-builder';
 import { TourFormPopulate } from './helpers/tour-form-populate';
 import { TourFormBuildPayload } from './helpers/tour-form-build-payload';
+import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'app-tours-form',
@@ -31,6 +32,7 @@ import { TourFormBuildPayload } from './helpers/tour-form-build-payload';
   styleUrls: ['./tours-form.component.scss'],
 })
 export class ToursFormComponent implements OnInit {
+  environment = environment;
   private static readonly IMAGE_SLOT_COUNT = 3;
   form!: FormGroup;
   user$!: Observable<User | null>;
@@ -51,7 +53,7 @@ export class ToursFormComponent implements OnInit {
     private destroyRef: DestroyRef,
     private formHelper: TourFormBuilder,
     private formPopulate: TourFormPopulate,
-    private buildPayloadHelper: TourFormBuildPayload,
+    private buildPayloadHelper: TourFormBuildPayload
   ) {
     this.user$ = this.authService.user$;
     this.guides$ = this.userService.guides$;
@@ -79,7 +81,7 @@ export class ToursFormComponent implements OnInit {
               this.formPopulate.populateImages(
                 this.form,
                 tour,
-                this.imagePreviews,
+                this.imagePreviews
               );
             this.imagePreviews = imagePreviews;
             this.coverPreview = coverPreview;
@@ -210,7 +212,7 @@ export class ToursFormComponent implements OnInit {
     if (!guide) return;
 
     const alreadyExists = this.guidesArray.value.some(
-      (g: any) => g._id === guide._id,
+      (g: any) => g._id === guide._id
     );
     if (!alreadyExists) {
       this.guidesArray.push(this.createGuideGroup(guide));
@@ -235,7 +237,7 @@ export class ToursFormComponent implements OnInit {
     const payload = this.buildPayloadHelper.buildPayload(
       this.form,
       this.coverFile,
-      this.guidesArray,
+      this.guidesArray
     );
     if (this.isEditMode) {
       this.tourService.updateTourById(payload, this.tourId);

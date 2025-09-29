@@ -5,8 +5,8 @@
     <section class="section-header">
       <div class="header__hero">
         <div class="header__hero-overlay">&nbsp;</div>
-        <!-- <img class="header__hero-img" :src="`/img/tours/${tour.imageCover}`" :alt="tour.name" /> -->
-        <img class="header__hero-img" [src]="`http://localhost:3000/img/tours/${tour.imageCover}`" [alt]="tour.name" />
+        <img class="header__hero-img" [src]="environment.assetsBase + `/img/tours/${tour.imageCover}`"
+          [alt]="tour.name" />
       </div>
       <div class="heading-box">
         <h1 class="heading-primary">
@@ -49,7 +49,7 @@
             @for (guide of tour.guides; track guide._id) {
             <div class="overview-box__detail">
               <!-- <img class="overview-box__img" :src="`/img/users/${guide.photo}`" :alt="guide.name" /> -->
-              <img class="overview-box__img" [src]="`http://localhost:3000/img/users/${guide.photo}`"
+              <img class="overview-box__img" [src]="environment.assetsBase + `/img/users/${guide.photo}`"
                 [alt]="guide.name" />
               @if(guide.role === 'lead-guide') {
               <span class="overview-box__label">Lead guide</span>
@@ -75,7 +75,7 @@
       @for(img of tour.images; track img; let i = $index) {
       <div class="picture-box">
         <!-- <img class="picture-box__img" :src="`/img/tours/${img}`" :alt="`The Park Camper Tour ${i + 1}`" -->
-        <img class="picture-box__img" [src]="`http://localhost:3000/img/tours/${img}`"
+        <img class="picture-box__img" [src]="environment.assetsBase + `/img/tours/${img}`"
           [alt]="`The Park Camper Tour ${i + 1}`" [class]="`picture-box__img--${i + 1}`" />
       </div>
       }
@@ -108,9 +108,9 @@
         </div>
         <!-- <img class="cta__img cta__img--1" :src="`/img/tours/${tour.images[1]}`" alt="Tour picture" />
               <img class="cta__img cta__img--2" :src="`/img/tours/${tour.images[2]}`" alt="Tour picture" /> -->
-        <img class="cta__img cta__img--1" [src]="`http://localhost:3000/img/tours/${tour.images[1]}`"
+        <img class="cta__img cta__img--1" [src]="environment.assetsBase + `/img/tours/${tour.images[1]}`"
           alt="Tour picture" />
-        <img class="cta__img cta__img--2" [src]="`http://localhost:3000/img/tours/${tour.images[2]}`"
+        <img class="cta__img cta__img--2" [src]="environment.assetsBase + `/img/tours/${tour.images[2]}`"
           alt="Tour picture" />
         <div class="cta__content">
           <h2 class="heading-secondary">What are you waiting for?</h2>

@@ -176,7 +176,7 @@
         @for(g of guidesArray.controls; let i = $index; track i ) {
         <div [formGroupName]="i" class="selected-guides--guide">
           <img class="form__guide-photo"
-            [src]="`http://localhost:3000/img/users/${g.value.photo}` || `http://localhost:3000/img/users/default.jpg`">
+            [src]="environment.assetsBase + `/img/users/${g.value.photo}` || environment.assetsBase + `/img/users/default.jpg`">
           <span>
             {{ g.value.name }} ({{ g.value.role }})
           </span>

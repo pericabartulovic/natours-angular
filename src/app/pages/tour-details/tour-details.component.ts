@@ -12,6 +12,7 @@ import { SplitStringPipe } from '../../pipes/split.pipe';
 import { ReviewCardComponent } from '../../components/review-card/review-card.component';
 import { MapBoxComponent } from '../../components/map-box/map-box.component';
 import { CarouselModule } from 'primeng/carousel';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-tour-details',
@@ -29,6 +30,7 @@ import { CarouselModule } from 'primeng/carousel';
   styleUrl: './tour-details.component.scss',
 })
 export class TourDetailsComponent implements OnInit {
+  environment = environment;
   tourId = input.required<string>();
   tour$!: Observable<Tour | null>;
   errorMsg = '';
@@ -40,7 +42,7 @@ export class TourDetailsComponent implements OnInit {
     private checkoutService: CheckoutService,
     private tourService: TourService,
     private title: Title,
-    private destroyRef: DestroyRef,
+    private destroyRef: DestroyRef
   ) {
     this.tour$ = this.tourService.tour$;
   }

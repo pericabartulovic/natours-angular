@@ -1,6 +1,7 @@
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Injectable } from '@angular/core';
 import { Tour } from '../../../../../models/tour.model';
+import { environment } from '../../../../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class TourFormPopulate {
@@ -36,10 +37,10 @@ export class TourFormPopulate {
   populateImages(
     form: FormGroup,
     tour: Tour,
-    imagePreviews: { [key: number]: string | ArrayBuffer | null },
+    imagePreviews: { [key: number]: string | ArrayBuffer | null }
   ): { imagePreviews: typeof imagePreviews; coverPreview: string | null } {
     const coverPreview = tour.imageCover
-      ? `http://localhost:3000/img/tours/${tour.imageCover}`
+      ? environment.assetsBase + `/img/tours/${tour.imageCover}`
       : null;
     const imagesArray = form.get('images') as FormArray;
     // NOTE: in TypeScript/JavaScript, function arguments are passed by value (for primitives)
@@ -54,7 +55,7 @@ export class TourFormPopulate {
 
     tour.images.forEach((img, i) => {
       if (i < TourFormPopulate.IMAGE_SLOT_COUNT) {
-        imagePreviews[i] = `http://localhost:3000/img/tours/${img}`;
+        imagePreviews[i] = environment.assetsBase + `/img/tours/${img}`;
         imagesArray.at(i).setValue(img);
       }
     });
@@ -72,7 +73,7 @@ export class TourFormPopulate {
           }),
           description: loc.description,
           day: loc.day,
-        }),
+        })
       );
     });
   }
@@ -85,7 +86,7 @@ export class TourFormPopulate {
       startDates.push(
         this.fb.group({
           date: formatted,
-        }),
+        })
       );
     });
   }
@@ -103,7 +104,7 @@ export class TourFormPopulate {
           email: [g.email],
           photo: [g.photo],
           role: [g.role],
-        }),
+        })
       );
     });
   }
