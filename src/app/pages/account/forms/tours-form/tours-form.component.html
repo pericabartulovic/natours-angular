@@ -55,7 +55,7 @@
     <fieldset class="flex--just-center">
       <legend class="form__label--asterisk">Cover image and tour images</legend>
       <div class="form__group form__photo-upload ma-bt-none">
-        <img class="form__tour-photo" [src]="coverPreview || 'http://localhost:3000/img/tours/placeholder.png'"
+        <img class="form__tour-photo" [src]="coverPreview || environment.assetsBase + '/img/tours/placeholder.png'"
           alt="Cover image preview" />
         @if (!coverPreview) {
         <input class="form__upload" type="file" accept="image/*" id="imageCover"

@@ -48,7 +48,6 @@
             <h2 class="heading-secondary ma-bt-lg">Your tour guides</h2>
             @for (guide of tour.guides; track guide._id) {
             <div class="overview-box__detail">
-              <!-- <img class="overview-box__img" :src="`/img/users/${guide.photo}`" :alt="guide.name" /> -->
               <img class="overview-box__img" [src]="environment.assetsBase + `/img/users/${guide.photo}`"
                 [alt]="guide.name" />
               @if(guide.role === 'lead-guide') {
@@ -74,7 +73,6 @@
     <section class="section-pictures">
       @for(img of tour.images; track img; let i = $index) {
       <div class="picture-box">
-        <!-- <img class="picture-box__img" :src="`/img/tours/${img}`" :alt="`The Park Camper Tour ${i + 1}`" -->
         <img class="picture-box__img" [src]="environment.assetsBase + `/img/tours/${img}`"
           [alt]="`The Park Camper Tour ${i + 1}`" [class]="`picture-box__img--${i + 1}`" />
       </div>
@@ -106,8 +104,6 @@
         <div class="cta__img cta__img--logo">
           <img src="/assets/img/logo-white.png" alt="Natours logo" />
         </div>
-        <!-- <img class="cta__img cta__img--1" :src="`/img/tours/${tour.images[1]}`" alt="Tour picture" />
-              <img class="cta__img cta__img--2" :src="`/img/tours/${tour.images[2]}`" alt="Tour picture" /> -->
         <img class="cta__img cta__img--1" [src]="environment.assetsBase + `/img/tours/${tour.images[1]}`"
           alt="Tour picture" />
         <img class="cta__img cta__img--2" [src]="environment.assetsBase + `/img/tours/${tour.images[2]}`"
