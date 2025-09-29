@@ -4,9 +4,9 @@
 @forward './layout';
 @forward './components';
 
-@use "primeicons/primeicons.css";
+@import 'mapbox-gl/dist/mapbox-gl.css';
+@import 'primeicons/primeicons.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@import '~mapbox-gl/dist/mapbox-gl.css';
