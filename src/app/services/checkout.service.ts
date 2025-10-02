@@ -10,13 +10,13 @@ export class CheckoutService {
   constructor(
     private http: HttpClient,
     @Inject(API_URL) private apiUrl: string,
-    private notificationService: NotificationService,
+    private notificationService: NotificationService
   ) {}
 
   async callCheckout(tourId: string) {
     try {
       const stripe = await loadStripe(
-        'pk_test_51S93q3IvElR9HPrrMyuV6hcGdc9tfb5k8bj8Jz1QNgYuuzYWjQVwfg6Q0ECNPioiBKIGdIIqowMEkMqwYiQvqY2N001pmqyjb2',
+        'pk_test_51S93q3IvElR9HPrrMyuV6hcGdc9tfb5k8bj8Jz1QNgYuuzYWjQVwfg6Q0ECNPioiBKIGdIIqowMEkMqwYiQvqY2N001pmqyjb2'
       );
 
       // Await the HTTP call instead of subscribing
@@ -24,8 +24,8 @@ export class CheckoutService {
         this.http.post<{ id: string }>(
           `${this.apiUrl}/bookings/checkout-session/${tourId}`,
           {},
-          { withCredentials: true },
-        ),
+          { withCredentials: true }
+        )
       );
 
       // Either redirect with session.id OR: if returned session.url: window.location.href = session.url;
@@ -38,5 +38,12 @@ export class CheckoutService {
         duration: 6000,
       });
     }
+  }
+
+  retrievePaymentStatus(sessionId: string) {
+    return this.http.get<{ payment_status: string }>(
+      `${this.apiUrl}/bookings/checkout-session/${sessionId}`,
+      { withCredentials: true }
+    );
   }
 }

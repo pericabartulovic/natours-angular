@@ -11,6 +11,7 @@ import { BookingsFormComponent } from '../pages/account/forms/bookings-form/book
 export const accRoutes: Routes = [
   { path: 'settings', component: AccountSettingsFormComponent },
   { path: 'my-bookings', component: MyBookingsComponent },
+  { path: 'my-bookings/:session_id', component: MyBookingsComponent },
   { path: 'my-reviews', component: MyReviewsComponent },
   { path: 'billing', component: MyBillingComponent },
   { path: 'tours', component: ToursFormComponent },
