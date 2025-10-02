@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { OverviewComponent } from '../../home/overview.component';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CheckoutService } from '../../../services/checkout.service';
 import { NotificationService } from '../../../services/notification.service';
 
@@ -16,10 +16,10 @@ export class MyBookingsComponent {
   constructor(
     private activatedRoute: ActivatedRoute,
     private checkoutService: CheckoutService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private router: Router
   ) {
     this.sessionId = this.activatedRoute.snapshot.queryParams['session_id'];
-    console.log('a');
   }
 
   ngOnInit(): void {
@@ -39,6 +39,10 @@ export class MyBookingsComponent {
               type: 'warning',
               duration: 6000,
             });
+        this.router.navigate([], {
+          queryParams: { session_id: null },
+          queryParamsHandling: 'merge',
+        });
       },
       error: (err) => {
         const backendMessage =
@@ -46,6 +50,11 @@ export class MyBookingsComponent {
         this.notificationService.notify({
           message: backendMessage,
           type: 'error',
+        });
+
+        this.router.navigate([], {
+          queryParams: { session_id: null },
+          queryParamsHandling: 'merge',
         });
       },
     });
