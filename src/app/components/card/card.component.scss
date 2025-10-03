@@ -95,7 +95,8 @@
   &__icon {
     height: 2rem;
     width: 2rem;
-    fill: #9b4fc5;
+    fill: var(--color-primary);
+    ;
 
     &-edit {
       fill: ghostwhite;

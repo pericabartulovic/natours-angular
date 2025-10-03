@@ -2,6 +2,8 @@ import { Component, DestroyRef, input, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { AsyncPipe, DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
+
+import { environment } from '../../../environments/environment';
 import { Title } from '@angular/platform-browser';
 import { AuthService } from '../../services/auth.service';
 import { CheckoutService } from '../../services/checkout.service';
@@ -12,7 +14,7 @@ import { SplitStringPipe } from '../../pipes/split.pipe';
 import { ReviewCardComponent } from '../../components/review-card/review-card.component';
 import { MapBoxComponent } from '../../components/map-box/map-box.component';
 import { CarouselModule } from 'primeng/carousel';
-import { environment } from '../../../environments/environment';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 @Component({
   selector: 'app-tour-details',
@@ -25,6 +27,7 @@ import { environment } from '../../../environments/environment';
     MapBoxComponent,
     RouterLink,
     CarouselModule,
+    ProgressSpinnerModule,
   ],
   templateUrl: './tour-details.component.html',
   styleUrl: './tour-details.component.scss',

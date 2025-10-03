@@ -129,6 +129,12 @@
   <div class=" heading-secondary error">{{ errorMsg }}</div>
   }
   @else {
-  <div class="loading heading-secondary">Loading...</div>
+  <div class="loading heading-secondary">
+    Loading tour details...
+    <p class="temp-info">It's free hosting... If needed wait server to wake up 🤭☺️</p>
+    <p-progress-spinner strokeWidth="8" fill="transparent" animationDuration="1s"
+      [style]="{ width: '50px', height: '50px' }" />
+  </div>
+
   }
 </div>

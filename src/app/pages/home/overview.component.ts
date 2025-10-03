@@ -5,10 +5,11 @@ import { AsyncPipe } from '@angular/common';
 import { Tour } from '../../models/tour.model';
 import { TourService } from '../../services/tour.service';
 import { CardComponent } from '../../components/card/card.component';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 @Component({
   selector: 'app-overview',
-  imports: [AsyncPipe, CardComponent],
+  imports: [AsyncPipe, CardComponent, ProgressSpinnerModule],
   templateUrl: './overview.component.html',
   styleUrl: './overview.component.scss',
   host: {
@@ -20,10 +21,7 @@ export class OverviewComponent implements OnInit {
   errorMsg = '';
   isMyBookingPage: boolean = false;
 
-  constructor(
-    private tourService: TourService,
-    private router: Router,
-  ) {
+  constructor(private tourService: TourService, private router: Router) {
     this.router.url.includes('/my-bookings')
       ? (this.isMyBookingPage = true)
       : (this.isMyBookingPage = false);
@@ -35,7 +33,7 @@ export class OverviewComponent implements OnInit {
         catchError((err) => {
           this.errorMsg = 'Failed to load tours! Please try later again.';
           return of([]);
-        }),
+        })
       );
     } else {
       this.tours$ = this.tourService.getMyBookings();
