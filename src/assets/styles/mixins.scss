@@ -15,6 +15,13 @@
     @media (min-width: 64em) {
       @content;
     }
+
+  }
+
+  @else if $breakpoint==lg-max {
+    @media (max-width: 64em) {
+      @content;
+    }
   }
 
   @else if $breakpoint==xl {

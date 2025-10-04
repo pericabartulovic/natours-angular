@@ -1,4 +1,7 @@
+@use '../../../../assets/styles/mixins.scss'as *;
+
 .user-view {
+  position: relative;
   background-color: #fff;
   max-width: 120rem;
   margin: 0 auto;
@@ -22,6 +25,16 @@
         to(#e84774));
     background-image: linear-gradient(to right bottom, #aa59fb, #e84774);
     padding: 4rem 0;
+    transition: all 0.3s;
+
+    @include respond(lg-max) {
+      position: absolute;
+      left: -69%;
+      width: 70%;
+      height: 100%;
+      z-index: 99;
+      box-shadow: 2px 0px 6px 1px #bf70ad;
+    }
   }
 
   &__content {
@@ -32,6 +45,53 @@
 
     &--wide {
       padding: 2rem 0;
+    }
+  }
+
+  &__checkbox {
+    display: none;
+
+    &:checked~.user-view__navigation {
+      left: 70%;
+      transform: rotate(180deg);
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+      border-top-left-radius: 0.5rem;
+      border-bottom-left-radius: 0.5rem;
+      box-shadow: -1px -1px 6px 1px #bf70ad;
+    }
+
+    &:checked~.user-view__menu {
+      left: 0;
+    }
+  }
+
+  &__navigation {
+    display: flex;
+    position: absolute;
+    top: 0;
+    left: 1%;
+    z-index: 100;
+    background: #ca50b7;
+    width: 5rem;
+    height: 4rem;
+    border-top-right-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 1px 1px 6px 1px #bf70ad;
+    transition: all 0.3s;
+
+    @include respond(lg) {
+      display: none;
+    }
+
+    &>svg {
+      width: 3rem;
+      height: 3rem;
+      fill: white;
+      transition: all 0.3s;
     }
   }
 }

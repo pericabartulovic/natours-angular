@@ -1,5 +1,11 @@
 @if(authService.user$ | async; as user) {
 <div class="user-view">
+  <input class="user-view__checkbox" type="checkbox" id="nav-button" name="nav-button">
+  <label class="user-view__navigation" for="nav-button">
+    <svg>
+      <use xlink:href="/assets/img/icons.svg#icon-chevron-right"></use>
+    </svg>
+  </label>
   <nav class="user-view__menu">
     <app-side-nav [role]="user.role" />
   </nav>
