@@ -3,12 +3,12 @@
   <form class="form form--login" [formGroup]="form" (ngSubmit)="onSubmit()">
     <div class="form__group">
       <label class="form__label" for="email">Email address</label>
-      <input id="email" class="form__input" type="email" placeholder="you@example.com"
+      <input id="email" class="form__input" type="email" placeholder="sophie@example.com"
         [formControl]="form.controls.email" appControlError />
     </div>
     <div class="form__group ma-bt-md">
       <label class="form__label" for="password">Password</label>
-      <input #passwordInput id="password" class="form__input" type="password" placeholder="••••••••"
+      <input #passwordInput id="password" class="form__input" type="password" placeholder="test1234"
         formControlName="password" appControlError />
       <app-btn-pass-visible [input]="passwordInput" />
     </div>
