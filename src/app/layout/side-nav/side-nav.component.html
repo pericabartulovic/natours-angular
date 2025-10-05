@@ -1,6 +1,6 @@
 <ul class="side-nav">
   <!-- navItem('#', 'Settings', 'settings', true) -->
-  <li [routerLinkActive]="['side-nav--active']" [routerLinkActiveOptions]="{ exact: true }">
+  <li [routerLinkActive]="['side-nav--active']" [routerLinkActiveOptions]="{ exact: true }" (click)="onLinkClick()">
     <a [routerLink]="['settings']" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
       <svg>
         <use xlink:href="/assets/img/icons.svg#icon-settings"></use>
@@ -10,7 +10,7 @@
   </li>
 
   <!-- navItem('/my-tours', 'My bookings', 'briefcase') -->
-  <li [routerLinkActive]="['side-nav--active']" [routerLinkActiveOptions]="{ exact: true }">
+  <li [routerLinkActive]="['side-nav--active']" [routerLinkActiveOptions]="{ exact: true }" (click)="onLinkClick()">
     <a [routerLink]="['my-bookings']" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
       <svg>
         <use xlink:href="/assets/img/icons.svg#icon-briefcase"></use>
@@ -20,7 +20,7 @@
   </li>
 
   <!-- navItem('#', 'My reviews', 'star') -->
-  <li [routerLinkActive]="['side-nav--active']" [routerLinkActiveOptions]="{ exact: true }">
+  <li [routerLinkActive]="['side-nav--active']" [routerLinkActiveOptions]="{ exact: true }" (click)="onLinkClick()">
     <a [routerLink]="['my-reviews']" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
       <svg>
         <use xlink:href="/assets/img/icons.svg#icon-star"></use>
@@ -30,7 +30,7 @@
   </li>
 
   <!-- navItem('#', 'Billing', 'credit-card') -->
-  <li [routerLinkActive]="['side-nav--active']" [routerLinkActiveOptions]="{ exact: true }">
+  <li [routerLinkActive]="['side-nav--active']" [routerLinkActiveOptions]="{ exact: true }" (click)="onLinkClick()">
     <a [routerLink]="['billing']" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
       <svg>
         <use xlink:href="/assets/img/icons.svg#icon-credit-card"></use>

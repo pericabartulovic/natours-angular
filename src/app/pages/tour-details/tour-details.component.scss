@@ -196,10 +196,14 @@
 
 .section-cta {
   margin-top: calc(0px - var(--section-rotate));
-  padding: 3rem;
-  padding-bottom: 11rem;
-  padding-top: calc(15rem + var(--section-rotate));
+  padding-top: calc(7rem + var(--section-rotate));
+  padding-bottom: 5rem;
   background-color: #f7f7f7;
+
+  @include respond(sm) {
+    padding-bottom: 11rem;
+    padding-top: calc(15rem + var(--section-rotate));
+  }
 }
 
 .cta {
@@ -208,20 +212,29 @@
   margin: 0 auto;
   overflow: hidden;
   background-color: #fff;
-  padding: 9rem 5rem 9rem 21rem;
+  padding: 2rem 2rem 9rem 16rem;
   border-radius: 2rem;
   -webkit-box-shadow: 0 3rem 8rem 0.5rem rgba(0, 0, 0, 0.15);
   box-shadow: 0 3rem 8rem 0.5rem rgba(0, 0, 0, 0.15);
 
+  @include respond(sm) {
+    padding: 9rem 5rem 9rem 21rem;
+  }
+
   &__img {
-    height: 15rem;
-    width: 15rem;
+    height: 12rem;
+    width: 12rem;
     position: absolute;
     left: 0;
     top: 50%;
     border-radius: 50%;
     -webkit-box-shadow: 1rem 0.5rem 3rem rgba(0, 0, 0, 0.15);
     box-shadow: 1rem 0.5rem 3rem rgba(0, 0, 0, 0.15);
+
+    @include respond(sm) {
+      height: 15rem;
+      width: 15rem;
+    }
 
     &--logo {
       padding: 2rem;
@@ -279,6 +292,19 @@
   &__text {
     font-size: 1.9rem;
     font-weight: 400;
+  }
+
+  &__button {
+    position: absolute;
+    bottom: 2rem;
+    right: 4rem;
+
+    @include respond(sm) {
+      position: unset;
+      bottom: unset;
+      right: unset;
+    }
+
   }
 }
 

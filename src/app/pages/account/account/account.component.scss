@@ -29,8 +29,8 @@
 
     @include respond(lg-max) {
       position: absolute;
-      left: -89%;
-      width: 90%;
+      left: -59%;
+      width: 60%;
       height: 100%;
       z-index: 99;
       box-shadow: 2px 0px 6px 1px #bf70ad;
@@ -52,7 +52,7 @@
     display: none;
 
     &:checked~.user-view__navigation {
-      left: 90%;
+      left: 60%;
       transform: rotate(180deg);
       border-top-right-radius: 0;
       border-bottom-right-radius: 0;
@@ -63,6 +63,10 @@
 
     &:checked~.user-view__menu {
       left: 0;
+    }
+
+    &:checked~.overlay {
+      display: block;
     }
   }
 
@@ -100,4 +104,12 @@
   display: block;
   padding: 2rem;
   text-align: center;
+}
+
+.overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgb(201 80 184 / 10%);
+  z-index: 90;
 }

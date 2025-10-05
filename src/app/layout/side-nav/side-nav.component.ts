@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, EventEmitter, input, Output } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
 @Component({
@@ -9,4 +9,9 @@ import { RouterModule } from '@angular/router';
 })
 export class SideNavComponent {
   role = input.required<string>();
+  @Output() checkboxCheck = new EventEmitter<void>();
+
+  onLinkClick() {
+    this.checkboxCheck.emit();
+  }
 }

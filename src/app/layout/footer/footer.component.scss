@@ -8,6 +8,7 @@
   justify-content: space-between;
 
   @media only screen and (max-width: 50em) {
+    padding: 3rem 2rem;
     grid-template-columns: 1fr;
     grid-row-gap: 1.25rem;
     justify-items: center;
