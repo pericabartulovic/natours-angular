@@ -13,10 +13,12 @@
   -ms-flex: 1;
   flex: 1;
   position: relative;
-  padding: 1rem 0;
+  padding: 1rem;
+  margin-top: 8rem;
 
   @include respond(sm) {
     padding: 2rem 1rem;
+    margin-top: unset;
   }
 
   @include respond(md) {

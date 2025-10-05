@@ -29,8 +29,8 @@
 
     @include respond(lg-max) {
       position: absolute;
-      left: -69%;
-      width: 70%;
+      left: -89%;
+      width: 90%;
       height: 100%;
       z-index: 99;
       box-shadow: 2px 0px 6px 1px #bf70ad;
@@ -52,7 +52,7 @@
     display: none;
 
     &:checked~.user-view__navigation {
-      left: 70%;
+      left: 90%;
       transform: rotate(180deg);
       border-top-right-radius: 0;
       border-bottom-right-radius: 0;
