@@ -44,7 +44,7 @@
 <div class="admin-nav">
   <h5 class="admin-nav__heading">Admin</h5>
   <ul class="side-nav">
-    <li [routerLinkActive]="['side-nav--active']" [routerLinkActiveOptions]="{ exact: true }">
+    <li [routerLinkActive]="['side-nav--active']" [routerLinkActiveOptions]="{ exact: true }" (click)="onLinkClick()">
       <a [routerLink]="['tours']" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
         <svg>
           <use xlink:href="/assets/img/icons.svg#icon-map"></use>
@@ -52,7 +52,7 @@
         Manage tours
       </a>
     </li>
-    <li [routerLinkActive]="['side-nav--active']" [routerLinkActiveOptions]="{ exact: true }">
+    <li [routerLinkActive]="['side-nav--active']" [routerLinkActiveOptions]="{ exact: true }" (click)="onLinkClick()">
       <a [routerLink]="['users']" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
         <svg>
           <use xlink:href="/assets/img/icons.svg#icon-users"></use>
@@ -60,7 +60,7 @@
         Manage users
       </a>
     </li>
-    <li [routerLinkActive]="['side-nav--active']" [routerLinkActiveOptions]="{ exact: true }">
+    <li [routerLinkActive]="['side-nav--active']" [routerLinkActiveOptions]="{ exact: true }" (click)="onLinkClick()">
       <a [routerLink]="['reviews']" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
         <svg>
           <use xlink:href="/assets/img/icons.svg#icon-star"></use>
@@ -68,7 +68,7 @@
         Manage reviews
       </a>
     </li>
-    <li [routerLinkActive]="['side-nav--active']" [routerLinkActiveOptions]="{ exact: true }">
+    <li [routerLinkActive]="['side-nav--active']" [routerLinkActiveOptions]="{ exact: true }" (click)="onLinkClick()">
       <a [routerLink]="['bookings']" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
         <svg>
           <use xlink:href="/assets/img/icons.svg#icon-briefcase"></use>

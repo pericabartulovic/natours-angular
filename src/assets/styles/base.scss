@@ -24,6 +24,10 @@ html {
   font-size: 50%;
   box-sizing: border-box;
 
+  @include respond(sm) {
+    font-size: 56.25%;
+  }
+
   @include respond(md) {
     font-size: 62.5%;
   }

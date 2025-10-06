@@ -19,7 +19,7 @@
   }
 
   @else if $breakpoint==lg-max {
-    @media (max-width: 64em) {
+    @media (max-width: 63.9375em) {
       @content;
     }
   }
